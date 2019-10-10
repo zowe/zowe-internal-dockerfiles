@@ -6,33 +6,49 @@
  - z/OSMF up and running
  - ZSS and ZSS Cross memory server up and running
 
+**TLTDR**:
+```sh
+docker pull vvvlc/zowe:latest
+docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net \
+  --env ZOWE_ZOSMF_HOST=mf.acme.net \
+  --env ZOWE_ZOSMF_PORT=1443 \
+  --env ZOWE_ZSS_HOST=mf.acme.net \
+  --env ZOWE_ZSS_PORT=60012 \
+  --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+  --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \ 
+  zowe:latest
+```
+Open browser and test it
+ - API Mediation Layer: https://myhost.acme.net:60004
+ - ZAF: https://myhost.acme.net:60014
+
 ## Preparing certificates for your host
 If already have certificates you can skip this part.
 ```
-cd broadcom-certs
+mkdir certs
+cd certs
 ```
 1) Generate certificate keypair using java keytool
- - Replace `6W5PZY2.dhcp.broadcom.net` with your hostname. 
- - When you are on wifi use `.wifi.broadcom.net` domain.
+ - Replace `myhost.acme.net` with your hostname. 
  - password has to be word password
  - keystore filename server.p12
  - `CN=` has to by valid hostname 
  - `-ext ExtendedKeyUsage=clientAuth,serverAuth`
 ```
-keytool -genkeypair -alias apiml -keyalg RSA -keysize 2048 -keystore server.p12 -dname "CN=6w5pzy2.dhcp.broadcom.net, OU=demo, O=Broadcom Inc, L=San Jose, S=California, C=US" -keypass password -storepass password -storetype PKCS12 -startdate 2019/09/01 -validity 730 -ext ExtendedKeyUsage=clientAuth,serverAuth
+keytool -genkeypair -alias apiml -keyalg RSA -keysize 2048 -keystore server.p12 -dname "CN=myhost.acme.net, OU=demo, O=Acme Inc, L=San Jose, S=California, C=US" -keypass password -storepass password -storetype PKCS12 -startdate 2019/09/01 -validity 730 -ext ExtendedKeyUsage=clientAuth,serverAuth
 ```
 
 2) Generate CSR using java keytool
- - Replace `6W5PZY2.dhcp.broadcom.net` with your hostname. 
- - in `SAN` have both `.wifi.broadcom.net` domain and `.dhcp.broadcom.net` domain.
+ - Replace `myhost.acme.net` with your hostname. 
+ - in `SAN` have `myhost.acme.net`.
  - password has to be word password
  - keystore filename server.p12
  - `CN=` has to by valid hostname 
 ```
-keytool -certreq -alias apiml -keystore server.p12 -storepass password -file server.csr -keyalg RSA -storetype PKCS12 -dname "CN=6W5PZY2.dhcp.broadcom.net, OU=demo, O=Broadcom Inc, L=San Jose, S=California, C=US"  -ext SAN=dns:6W5PZY2.dhcp.broadcom.net,dns:6W5PZY2.wifi.broadcom.net -ext ExtendedKeyUsage=clientAuth,serverAuth
+keytool -certreq -alias apiml -keystore server.p12 -storepass password -file server.csr -keyalg RSA -storetype PKCS12 -dname "CN=myhost.acme.net, OU=demo, O=Acme Inc, L=San Jose, S=California, C=US"  -ext SAN=dns:myhost.acme.net -ext ExtendedKeyUsage=clientAuth,serverAuth
 ```
 
- 3) sign your csr
+ 3) sign your csr (this is done by someone in your organization)
  7) Save certs next to `server.p12`
     - server.p7b   (PKCS#7 - contains chain of certificates)
     - server.cer  (X.509 - your signed certificate)
@@ -41,7 +57,7 @@ keytool -certreq -alias apiml -keystore server.p12 -storepass password -file ser
     ```
     keytool -import -alias apiml -trustcacerts -file server.p7b -keystore server.p12 -storepass password
     ```
- Finally files in folder `broadcom-certs`
+ Finally files in folder `certs`
    - `digicert_global_root_ca.cer`  
    - `digicert_sha2_secure_server_ca_digicert_global_root_ca_.cer`
    - `server.cer`
@@ -244,10 +260,10 @@ SECURITY WARNING: You are building a Docker image from Windows against a non-Win
 ## Executing Zowe Docker Container 
  - prepare folder with certificates, you should have it from previous step.
  - adjust `docker start` command
-   - `-h <hostname>` - hostname of docker host (hostname of your laptop eg: 6W5PZY2.dhcp.broadcom.net)
-   - `ZOWE_ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg usilca32.lvn.broadcom.net)
+   - `-h <hostname>` - hostname of docker host (hostname of your laptop eg: myhost.acme.net)
+   - `ZOWE_ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
    - `ZOWE_ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
-   - `ZOWE_ZSS_HOST=<zss_hostname>` - ZSS host (eg usilca32.lvn.broadcom.net)
+   - `ZOWE_ZSS_HOST=<zss_hostname>` - ZSS host (eg mf.acme.net)
    - `ZOWE_ZSS_PORT=<zss_port>` - ZSS port z/OSMF port eg (60012)
    - `source=<folder with certs>` - folder where you have your certs
    - `LAUNCH_COMPONENT_GROUPS=<DESKTOP or GATEWAY>` - whay do you want to start
@@ -268,13 +284,13 @@ If you want to
 
 ### Windows
  - prepare folder with certificates 
-   I have my certificates in `c:\workspaces\ZooTainers-Hackathon2019\broadcom-certs`
+   I have my certificates in `c:\workspaces\ZooTainers-Hackathon2019\certs`
 ```
-c:\workspaces\ZooTainers-Hackathon2019\broadcom-certs>dir
+c:\workspaces\ZooTainers-Hackathon2019\certs>dir
  Volume in drive C is Windows
  Volume Serial Number is 5EB2-BB6A
 
- Directory of c:\workspaces\ZooTainers-Hackathon2019\broadcom-certs
+ Directory of c:\workspaces\ZooTainers-Hackathon2019\certs
 
 10/10/2019  09:35 AM    <DIR>          .
 10/10/2019  09:35 AM    <DIR>          ..
@@ -287,12 +303,12 @@ c:\workspaces\ZooTainers-Hackathon2019\broadcom-certs>dir
 ```
 An example of `docker start` command
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -h 6W5PZY2.dhcp.broadcom.net --env ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\broadcom-certs,target=/root/zowe/certs zowe/docker:1.5.0
+docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs zowe/docker:1.5.0
 ```
 
 ### Linux
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -h 6W5PZY2.dhcp.broadcom.net --env ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/vlcvi01/workspaces/ZooTainers-Hackathon2019/broadcom-certs,target=/root/zowe/certs zowe/docker:1.5.0
+docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/john/certs,target=/root/zowe/certs zowe/docker:1.5.0
 ```
 
 Expected output
@@ -314,7 +330,7 @@ DIRSTACK=()
 EUID=0
 GROUPS=()
 HOME=/root
-HOSTNAME=6W5PZY2.dhcp.broadcom.net
+HOSTNAME=myhost.acme.net
 HOSTTYPE=x86_64
 IFS=$' \t\n'
 JAVA_DEBIAN_VERSION=8u162-b12-1~deb9u1
@@ -342,24 +358,24 @@ UID=0
 YARN_VERSION=1.5.1
 ZOWE_INSTALL_ROOT=/root/zowe/1.5.0
 ZOWE_JAVA_HOME=/usr
-ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZOSMF_HOST=mf.acme.net
 ZOWE_ZOSMF_PORT=1443
-ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZSS_HOST=mf.acme.net
 ZOWE_ZSS_PORT=60012
 _=
 YARN_VERSION=1.5.1
 LANG=C.UTF-8
-HOSTNAME=6W5PZY2.dhcp.broadcom.net
+HOSTNAME=myhost.acme.net
 OLDPWD=/
 NODE_HOME=/usr/local
 JAVA_HOME=/docker-java-home/jre
-ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZOSMF_HOST=mf.acme.net
 JAVA_VERSION=8u162
 PWD=/root/zowe
 HOME=/root
 ZOWE_ZOSMF_PORT=1443
 ZOWE_JAVA_HOME=/usr
-ZOWE_EXPLORER_HOST=6W5PZY2.dhcp.broadcom.net
+ZOWE_EXPLORER_HOST=myhost.acme.net
 _BPXK_AUTOCVT=OFF
 CA_CERTIFICATES_JAVA_VERSION=20170531+nmu1
 NODE_VERSION=8.11.1
@@ -370,13 +386,13 @@ SHLVL=2
 ZOWE_ZSS_PORT=60012
 ZOWE_IPADDRESS=127.0.0.1
 PATH=/root/zowe:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin
-ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZSS_HOST=mf.acme.net
 _=/usr/bin/env
 grep: /root/: Is a directory
 Warning: ping command not found trying oping
 Error: neither ping nor oping has not been found, add folder with ping or oping on $PATH, normally they are in /bin
-/root/zowe/1.5.0/scripts/configure/zowe-init.sh: line 264: 6W5PZY2.dhcp.broadcom.net: command not found
-warning :  6W5PZY2.dhcp.broadcom.net did not match stated IP address 127.0.0.1
+/root/zowe/1.5.0/scripts/configure/zowe-init.sh: line 264: myhost.acme.net: command not found
+warning :  myhost.acme.net did not match stated IP address 127.0.0.1
 Reading variables from zowe-install.yaml
 Beginning to configure zowe installed in /root/zowe/1.5.0
 /root/zowe/1.5.0/scripts/configure/zowe-install-iframe-plugin.sh: line 49: chtag: command not found
@@ -423,12 +439,12 @@ Show Environment
 _BPX_JOBNAME=ZOWE1DT
 YARN_VERSION=1.5.1
 LANG=C.UTF-8
-HOSTNAME=6W5PZY2.dhcp.broadcom.net
+HOSTNAME=myhost.acme.net
 OLDPWD=/root/zowe/1.5.0/zlux-app-server/bin
 NODE_PATH=../..:../../zlux-server-framework/node_modules:
 NODE_HOME=/usr/local
 JAVA_HOME=/docker-java-home/jre
-ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZOSMF_HOST=mf.acme.net
 ZLUX_LOG_PATH=/root/zowe/1.5.0/zlux-app-server/log/nodeServer-2019-10-10-09-45.log
 JAVA_VERSION=8u162
 PWD=/root/zowe/1.5.0/zlux-app-server/lib
@@ -448,7 +464,7 @@ SHLVL=3
 ZOWE_ZSS_PORT=60012
 PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 _CEE_RUNOPTS=XPLINK(ON),HEAPPOOLS(ON)
-ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZSS_HOST=mf.acme.net
 _=/usr/bin/env
 Show location of node
 node is /usr/local/bin/node
@@ -547,5 +563,5 @@ Script dir = /root/zowe/1.5.0/zlux-app-server/bin
 
 ## Test it
 Open browser and test it
- - API Mediation Layer: https://6W5PZY2.dhcp.broadcom.net:60004
- - ZAF: https://6W5PZY2.dhcp.broadcom.net:60014
+ - API Mediation Layer: https://mf.acme.net:60004
+ - ZAF: https://mf.acme.net:60014
