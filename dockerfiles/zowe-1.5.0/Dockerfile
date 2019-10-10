@@ -20,6 +20,6 @@ RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 RUN mkdir /root/zowe/ && wget "https://d1xozlojgf8voe.cloudfront.net/builds/1.5.0/zowe-1.5.0.pax" -O /root/zowe/zowe-1.5.0.pax
 COPY * /root/zowe/
-RUN cd /root/zowe/ ; chmod o+r * && ./install.sh && rm -f /root/zowe/*.pax && rm -rf /root/zowe/zowe/ && apt-get purge -y pax build-essential && apt autoremove -y && rm -rf /var/lib/apt/lists/*
+RUN cd /root/zowe/; chmod o+r * && ./install.sh && rm -f /root/zowe/*.pax && rm -rf /root/zowe/zowe/ && apt-get purge -y pax build-essential && apt autoremove -y && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT (cd /root/zowe/ && ./run.sh && cd /root/zowe/1.5.0/scripts/internal && bash ./run-zowe.sh; sleep infinity)
