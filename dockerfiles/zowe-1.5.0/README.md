@@ -303,12 +303,12 @@ c:\workspaces\ZooTainers-Hackathon2019\certs>dir
 ```
 An example of `docker start` command
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs zowe/docker:1.5.0
+docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs zowe/docker:1.5.0
 ```
 
 ### Linux
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/john/certs,target=/root/zowe/certs zowe/docker:1.5.0
+docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZOWE_ZSS_HOST=mf.acme.net --env ZOWE_ZSS_PORT=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/john/certs,target=/root/zowe/certs zowe/docker:1.5.0
 ```
 
 Expected output
@@ -564,4 +564,5 @@ Script dir = /root/zowe/1.5.0/zlux-app-server/bin
 ## Test it
 Open browser and test it
  - API Mediation Layer: https://mf.acme.net:60004
+ - API ML Discovery Service: https://mf.acme.net:60003/
  - ZAF: https://mf.acme.net:60014
