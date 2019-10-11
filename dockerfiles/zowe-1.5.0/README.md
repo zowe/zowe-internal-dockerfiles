@@ -6,7 +6,7 @@
  - z/OSMF up and running
  - ZSS and ZSS Cross memory server up and running
 
-**TLTDR**:
+**TL;DR**:
 ```sh
 docker pull vvvlc/zowe:latest
 docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net \
