@@ -6,9 +6,6 @@ ZOWE_INSTALL_ROOT=/root/zowe/1.5.0
 DEBUG=""
 set $DEBUG
 
-rm -rf $ZOWE_INSTALL_ROOT
-gcc conv.c -std=c99 -o conv
-
 rm -rf zowe
 mkdir zowe
 cd zowe
