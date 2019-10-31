@@ -84,5 +84,9 @@ RUN cd /root/zowe/ && \
 COPY run.sh /root/zowe/
 RUN chmod o+rx /root/zowe/run.sh
 COPY start_fix.sh /root/zowe/1.6.0/components/api-mediation/bin/start.sh
+<<<<<<< HEAD
 
 ENTRYPOINT ["/root/zowe/run.sh"]
+=======
+ENTRYPOINT (cd /root/zowe/ && ./run.sh && cd /root/zowe/1.6.0/scripts/internal && bash ./run-zowe.sh; sleep infinity)
+>>>>>>> 38e5f90... zowe 1.6.0
