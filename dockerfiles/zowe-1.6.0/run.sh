@@ -1,7 +1,7 @@
 #!/bin/bash
 export PATH=$(pwd):$PATH
 CERTS_DIR=/root/zowe/certs
-ZOWE_INSTALL_ROOT=/root/zowe/1.5.0
+ZOWE_INSTALL_ROOT=/root/zowe/1.6.0
 
 DEBUG=""
 set $DEBUG
