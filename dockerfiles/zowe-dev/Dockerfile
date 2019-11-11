@@ -64,3 +64,8 @@ RUN curl -fL https://getcli.jfrog.io | sh && mv jfrog /usr/local/bin
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$DEFAULT_NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$DEFAULT_NODE_VERSION/bin:$PATH
+
+#####################################################
+# install docker
+# to use Docker-In-Docker, must mount -v /var/run/docker.sock:/var/run/docker.sock
+RUN apt-get install -y docker.io
