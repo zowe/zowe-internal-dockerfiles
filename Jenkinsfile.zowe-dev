@@ -29,7 +29,7 @@ node ('ibm-jenkins-slave-dind') {
     )
 
     // default build stage, dockerFile is {@code "Dockerfile"}
-    pipeline.build()
+    pipeline.build(dockerFile: 'dockerfiles/zowe-dev/Dockerfile')
 
     // default publish stage, image is "${lib.Constants.DEFAULT_DOCKER_IMAGE_PREFIX}/zowe-jenkins-base"
     pipeline.publish()
