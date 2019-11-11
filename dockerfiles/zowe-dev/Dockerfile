@@ -1,6 +1,10 @@
 FROM ubuntu:18.04
 
 #####################################################
+# version the Dockerfile, so we can do release bump
+LABEL version="0.0.1"
+
+#####################################################
 # Set /bin/sh to use bash instead of dash
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 #
