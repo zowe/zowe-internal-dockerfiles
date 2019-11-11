@@ -23,13 +23,14 @@ node ('ibm-jenkins-slave-dind') {
             usernamePasswordCredential : lib.Constants.DEFAULT_DOCKER_REGISTRY_CREDENTIAL,
             // prefix should be synced with credential
             image                      : "${lib.Constants.DEFAULT_DOCKER_IMAGE_PREFIX}/zowe-jenkins-base".toString(),
+            dockerFile                 : "zowe-dev/Dockerfile"
         ],
         disableArtifactory: true,
         disablePax:  true
     )
 
     // default build stage, dockerFile is {@code "Dockerfile"}
-    pipeline.build(dockerFile: 'zowe-dev/Dockerfile')
+    pipeline.build()
 
     // default publish stage, image is "${lib.Constants.DEFAULT_DOCKER_IMAGE_PREFIX}/zowe-jenkins-base"
     pipeline.publish()
