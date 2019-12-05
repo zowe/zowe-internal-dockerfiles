@@ -1,0 +1,163 @@
+Sending build context to Docker daemon  47.62kB
+Step 1/22 : FROM loyaltyone/docker-slim-java-node
+ ---> faaf5f51785e
+Step 2/22 : EXPOSE 60004/tcp
+ ---> Using cache
+ ---> 152156f9ee15
+Step 3/22 : EXPOSE 8544/tcp
+ ---> Using cache
+ ---> c228c3b25b53
+Step 4/22 : EXPOSE 7553/tcp
+ ---> Using cache
+ ---> ddce460725db
+Step 5/22 : ENV NODE_HOME='/usr/local'
+ ---> Using cache
+ ---> e5a0149eaa21
+Step 6/22 : ENV ZOWE_JAVA_HOME='/usr'
+ ---> Using cache
+ ---> a0167a2c1129
+Step 7/22 : ENV ZOWE_ZOSMF_HOST='zosmf'
+ ---> Using cache
+ ---> 8beef837e069
+Step 8/22 : ENV ZOWE_ZOSMF_PORT='1443'
+ ---> Using cache
+ ---> 222ad76f0429
+Step 9/22 : ENV ZOWE_ZSS_HOST='zss'
+ ---> Using cache
+ ---> a2b46fc56166
+Step 10/22 : ENV ZOWE_ZSS_PORT='8542'
+ ---> Using cache
+ ---> 000dcdfeb75a
+Step 11/22 : ENV LAUNCH_COMPONENT_GROUPS='GATEWAY,DESKTOP'
+ ---> Using cache
+ ---> 97c7d82a95e1
+Step 12/22 : ENV PAX_FILE=zowe-1.7.0-staging-346-20191204051355.pax
+ ---> Using cache
+ ---> fe7ed0faa130
+Step 13/22 : RUN apt-get update && apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless mc wget && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> c0bc14141ff8
+Step 14/22 : RUN echo "dash dash/sh boolean false" | debconf-set-selections
+ ---> Using cache
+ ---> 679d8b97ad72
+Step 15/22 : RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+ ---> Using cache
+ ---> 8105cdcf5c18
+Step 16/22 : RUN mkdir /root/zowe/ && wget -q "https://d1xozlojgf8voe.cloudfront.net/builds/1.7.0/zowe-1.7.0.pax" -O /root/zowe/zowe.pax
+ ---> Using cache
+ ---> dd5f2f4afd4f
+Step 17/22 : RUN cd /root/zowe/ &&     ( echo '#!/bin/sh'; echo 'tr '"'"'\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037\040\041\042\043\044\045\046\047\050\051\052\053\054\055\056\057\060\061\062\063\064\065\066\067\070\071\072\073\074\075\076\077\100\101\102\103\104\105\106\107\110\111\112\113\114\115\116\117\120\121\122\123\124\125\126\127\130\131\132\133\134\135\136\137\140\141\142\143\144\145\146\147\150\151\152\153\154\155\156\157\160\161\162\163\164\165\166\167\170\171\172\173\174\175\176\177\200\201\202\203\204\205\206\207\210\211\212\213\214\215\216\217\220\221\222\223\224\225\226\227\230\231\232\233\234\235\236\237\240\241\242\243\244\245\246\247\250\251\252\253\254\255\256\257\260\261\262\263\264\265\266\267\270\271\272\273\274\275\276\277\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337\340\341\342\343\344\345\346\347\350\351\352\353\354\355\356\357\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377'"'"' '"'"'\000\001\002\003\234\011\206\177\227\215\216\013\014\015\016\017\020\021\022\023\235\012\010\207\030\031\222\217\034\035\036\037\200\201\202\203\204\205\027\033\210\211\212\213\214\005\006\007\220\221\026\223\224\225\226\004\230\231\232\233\024\025\236\032\040\240\342\344\340\341\343\345\347\361\242\056\074\050\053\174\046\351\352\353\350\355\356\357\354\337\041\044\052\051\073\136\055\057\302\304\300\301\303\305\307\321\246\054\045\137\076\077\370\311\312\313\310\315\316\317\314\140\072\043\100\047\075\042\330\141\142\143\144\145\146\147\150\151\253\273\360\375\376\261\260\152\153\154\155\156\157\160\161\162\252\272\346\270\306\244\265\176\163\164\165\166\167\170\171\172\241\277\320\133\336\256\254\243\245\267\251\247\266\274\275\276\335\250\257\135\264\327\173\101\102\103\104\105\106\107\110\111\255\364\366\362\363\365\175\112\113\114\115\116\117\120\121\122\271\373\374\371\372\377\134\367\123\124\125\126\127\130\131\132\262\324\326\322\323\325\060\061\062\063\064\065\066\067\070\071\263\333\334\331\332\237'"'"' <$1' ) >conv && chmod +x conv && ln -s $(pwd)/conv /bin/conv &&     rm -rf zowe &&     mkdir zowe &&     cd zowe &&     tar -xvf ../zowe.pax --strip 1 &&     find . -type f -iregex '.*\.\(rexx\|js\|sh\|json\|jcl\|yaml\|clist\|env\)$' -exec sh -c "conv '{}' | sponge '{}'" \; &&     find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; &&     find . -type f -name '*.sh' -exec sh -c "sed -i 's/-ppx/-pp/' {}" \; &&     find . -type f -name '*.sh' -exec sh -c "sed -i 's/iconv -f IBM-1047 -t IBM-850/cat/' {}" \; &&     find . -type f -name '*.sh' -exec sh -c "chmod +x {}" \; &&     sed -i 's/-px //' scripts/zowe-install-zlux.sh &&         sed -i 's/java version/openjdk version/' scripts/utils/validate-java.sh &&         echo "exit 0" > scripts/opercmd &&     echo "exit 0" > /bin/extattr && chmod +x /bin/extattr &&     echo "exit 0" > /bin/ping && chmod +x  /bin/ping &&     echo "exit 0" > /bin/oping && chmod +x  /bin/oping &&     echo "exit 0" > /bin/onetstat && chmod +x  /bin/onetstat &&     echo "exit 0" > /bin/chtag && chmod +x  /bin/chtag &&     echo 'cat $5' > /bin/iconv && chmod +x /bin/iconv &&     mv /usr/bin/iconv /usr/bin/iconv_
+ ---> Using cache
+ ---> c8d6fc422ad0
+Step 18/22 : RUN cd /root/zowe/zowe/files &&     for f in *.pax; do         echo "Processing $f file." &&         rm -rf tmp &&         mkdir tmp &&         cd tmp &&         pax -rf ../$f &&         rm ../$f &&         find . -type f -iregex '.*\.\(rexx\|js\|sh\|json\|jcl\|yaml\|clist\|html\|template\|css\|svg\|map\|gz\|env\)$' -exec sh -c "conv '{}' | sponge '{}'" \; &&         find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; &&         pax -wf ../$f . &&         cd .. ;      done &&         cd zlux &&     for f in *.pax; do         echo "Processing $f file." &&        rm -rf tmp &&        mkdir tmp &&        cd tmp &&        pax -rf ../$f &&        rm ../$f &&        find . -type f -exec sh -c "conv '{}' | sponge '{}'" \; &&        find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; &&        pax -wf ../$f . &&        cd .. ;     done &&     rm -f /root/zowe/*.pax
+ ---> Using cache
+ ---> 3dcdc90d2886
+Step 19/22 : RUN cd /root/zowe/ &&     export PATH=$PATH:$NODE_HOME/bin &&     cd zowe/install &&     bash zowe-install.sh -I &&     rm -f /root/zowe/*.pax && rm -rf /root/zowe/zowe/ &&     apt-get purge -y pax && apt autoremove -y && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 61a0ff796c92
+Step 20/22 : COPY run.sh /root/zowe/
+ ---> 17f7e4d1b3b9
+Step 21/22 : RUN chmod o+rx /root/zowe/run.sh
+ ---> Running in ef3d186e3b0a
+Removing intermediate container ef3d186e3b0a
+ ---> 86281ffb3a92
+Step 22/22 : ENTRYPOINT ["/root/zowe/run.sh"]
+ ---> Running in cb9605e6a7d9
+Removing intermediate container cb9605e6a7d9
+ ---> 32fab0cda741
+Successfully built 32fab0cda741
+Successfully tagged zowe/docker:1.7.0
+BASH=/bin/bash
+BASHOPTS=cmdhist:complete_fullquote:extquote:force_fignore:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=([0]="/root/zowe/run.sh")
+BASH_VERSINFO=([0]="4" [1]="4" [2]="12" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+BASH_VERSION='4.4.12(1)-release'
+CA_CERTIFICATES_JAVA_VERSION=20170531+nmu1
+CERTS_DIR=/root/zowe/certs
+DEBUG=
+DIRSTACK=()
+EUID=0
+GROUPS=()
+HOME=/root
+HOSTNAME=6W5PZY2.dhcp.broadcom.net
+HOSTTYPE=x86_64
+IFS=$' \t\n'
+JAVA_DEBIAN_VERSION=8u162-b12-1~deb9u1
+JAVA_HOME=/docker-java-home/jre
+JAVA_VERSION=8u162
+LANG=C.UTF-8
+LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
+MACHTYPE=x86_64-pc-linux-gnu
+NODE_HOME=/usr/local
+NODE_VERSION=8.11.1
+OPTERR=1
+OPTIND=1
+OSTYPE=linux-gnu
+PATH=/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PAX_FILE=zowe-1.7.0-staging-346-20191204051355.pax
+PIPESTATUS=([0]="0")
+PPID=0
+PS4='+ '
+PWD=/
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments
+SHLVL=1
+TERM=xterm
+UID=0
+YARN_VERSION=1.5.1
+ZOWE_INSTALL_ROOT=/root/zowe/1.7.0
+ZOWE_INSTANCE_ROOT=/root/zowe-instance-dir
+ZOWE_JAVA_HOME=/usr
+ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZOSMF_PORT=1443
+ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net
+ZOWE_ZSS_PORT=60012
+_=
+YARN_VERSION=1.5.1
+LANG=C.UTF-8
+HOSTNAME=6W5PZY2.dhcp.broadcom.net
+NODE_HOME=/usr/local
+JAVA_HOME=/docker-java-home/jre
+ZOWE_ZOSMF_HOST=usilca32.lvn.broadcom.net
+JAVA_VERSION=8u162
+PWD=/
+HOME=/root
+ZOWE_ZOSMF_PORT=1443
+ZOWE_JAVA_HOME=/usr
+ZOWE_EXPLORER_HOST=6W5PZY2.dhcp.broadcom.net
+_BPXK_AUTOCVT=OFF
+PAX_FILE=zowe-1.7.0-staging-346-20191204051355.pax
+CA_CERTIFICATES_JAVA_VERSION=20170531+nmu1
+NODE_VERSION=8.11.1
+JAVA_DEBIAN_VERSION=8u162-b12-1~deb9u1
+TERM=xterm
+LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
+SHLVL=1
+ZOWE_ZSS_PORT=60012
+ZOWE_IPADDRESS=127.0.0.1
+PATH=/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin
+ZOWE_ZSS_HOST=usilca32.lvn.broadcom.net
+_=/usr/bin/env
+Installation root /root/zowe/1.7.0
+Error: ping 6W5PZY2.dhcp.broadcom.net command failed to find hostname
+    Please enter the ZOWE_EXPLORER_HOST of this system
+^CDownloading z/OSMF certificate from usilca32.lvn.broadcom.net:1443 to /root/zowe/1.7.0/components/api-mediation/keystore/localhost/zosmf.cer
+/root/zowe/run.sh: line 38: /root/zowe/1.7.0/components/api-mediation/keystore/localhost/zosmf.cer: No such file or directory
+depth=2 C = US, O = DigiCert Inc, OU = www.digicert.com, CN = DigiCert Global Root CA
+verify return:1
+depth=1 C = US, O = DigiCert Inc, CN = DigiCert SHA2 Secure Server CA
+verify return:1
+depth=0 C = US, ST = California, L = San Jose, O = Broadcom Inc, OU = IT, CN = *.lvn.broadcom.net
+verify return:1
+DONE
+Importing z/OSMF certificate '/root/zowe/1.7.0/components/api-mediation/keystore/localhost/zosmf.cer' into '/root/zowe/1.7.0/components/api-mediation/keystore/localhost/localhost.truststore.p12'
+^Csed: can't read /root/zowe-instance-dir/instance.env: No such file or directory
+sed: can't read /root/zowe-instance-dir/instance.env: No such file or directory
+^C/root/zowe/run.sh: line 60: cd: /root/zowe-instance-dir/bin/internal/: No such file or directory
+bash: ./run-zowe.sh: No such file or directory
+^C^C

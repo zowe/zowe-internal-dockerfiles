@@ -19,6 +19,6 @@ docker run -it \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
     --mount type=bind,source=c:/temp/vlcvi01,target=/root/zowe/certs \
     --mount type=bind,source=C:/Users/vv632728/workspaces/zowe,target=/root/zowe/src \
-    zowe/docker:1.6.0 $@
+    zowe/docker:1.8.0 $@
 
     
