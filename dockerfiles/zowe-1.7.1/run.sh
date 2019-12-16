@@ -60,4 +60,11 @@ fi
 
 cd $ZOWE_INSTALL_ROOT/scripts/internal/
 bash ./run-zowe.sh
+
+if [ "$1" = "--post-start" ]; then
+    echo "Zowe install directory: $ZOWE_INSTALL_ROOT"
+    echo "Zowe is started, when you exit infinite loop starts."
+    cd $ZOWE_INSTALL_ROOT
+    bash
+fi
 sleep infinity
