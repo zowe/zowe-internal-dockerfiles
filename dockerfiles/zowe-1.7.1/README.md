@@ -42,7 +42,7 @@ Installation and configuration steps
                   --mount type=bind,source=c:/zowe/zowe-user-dir,target=/root/zowe-user-dir/ \
                   --name "zowe" \
                   --rm \
-                  zowe/docker:latest
+                  vvvlc/zowe:latest
           ```
  3) Open browser and test it
     - API Mediation Layer: https://myhost.acme.net:7554
@@ -102,12 +102,12 @@ In case you don't trust pre-builded images perform
 ```sh
 git checkout https://github.com/zowe/zowe-dockerfiles
 cd zowe-dockerfile/dockerfiles/zowe-1.7.1
-docker build -t zowe/docker:1.7.1 .
+docker build -t zowe/docker:1.7.1 -t zowe/docker:latest -t  vvvlc/zowe:1.7.1$1 -t vvvlc/zowe:latest .
 ```
 
 Expected output on Windows 10 with Docker:
 ```
-PS C:\Users\vv632728\workspaces\zowe\docker\zowe-dockerfiles\zowe-1.7.7> docker build -t zowe/docker:1.7.7 .
+PS C:\Users\vv632728\workspaces\zowe\docker\zowe-dockerfiles\zowe-1.7.1> docker build -t zowe/docker:1.7.1 .
 Sending build context to Docker daemon  457.6MB
 ...
 Successfully tagged zowe/docker:1.7.1
@@ -149,7 +149,7 @@ docker run -it \
         --mount type=bind,source=c:/zowe/zowe-user-dir,target=/root/zowe-user-dir/ \
         --name "zowe" \
         --rm \
-        zowe/docker:latest
+        vvvlc/zowe:latest
 ```
 If 
  - you want to start only a component adjust `LAUNCH_COMPONENT_GROUPS`.
@@ -220,7 +220,7 @@ In this scenario we disable ZAF and start only the API Mediation Layer, we use f
           --mount type=bind,source=c:/zowe/zowe-user-dir,target=/root/zowe-user-dir/ \
           --name "zowe" \
           --rm \
-          zowe/docker:1.7.1 $@
+          vvvlc/zowe:latest $@
     ```
 ### Hostname of your workstation does not match subject alternate names in certificate
 When hostname of your machine does not match alternate names in certificate modify `%WINDIR%\System32\drivers\etc\hosts`
@@ -359,7 +359,7 @@ Quick summary of steps:
     ```
  2. start Zowe container and enforce regeneration of certificates via  `--regenerate-certificates`
     ```sh
-    docker run -it ... zowe/docker:1.7.1 --regenerate-certificates
+    docker run -it ... vvvlc/zowe:1.7.1 --regenerate-certificates
     ```
     
     **NOTE**: option `--regenerate-certificates` is need only first time to register file `localca.cer` created in first step.
