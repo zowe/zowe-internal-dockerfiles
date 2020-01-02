@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, getopt
+import sys, getopt, os, stat, pwd, grp, datetime
 from flask import Flask, jsonify, abort, make_response, request
 import json
 import re
@@ -115,16 +115,44 @@ def get_job_files(pth):
     return resp    
 
 
+def permissions_to_unix_name(st):
+    is_dir = 'd' if stat.S_ISDIR(st.st_mode) else '-'
+    dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
+    perm = str(oct(st.st_mode)[-3:])
+    return is_dir + ''.join(dic.get(x,x) for x in perm)
 
 @app.route('/zosmf/restfiles/fs')
 def list_files():
     print(request.data)
+    local_files=[]
+    pth = request.args.get('path', '/')
+
+    for d in os.listdir(pth):
+        stats=os.stat(os.path.join(pth,d))
+        local_files+=[{
+            "name":d, 
+            "mode": permissions_to_unix_name(stats), #"drwxr-xr-x", 
+            "size": stats.st_size, 
+            "uid": stats.st_uid, 
+            "user":pwd.getpwuid(stats.st_uid)[0], 
+            "gid":stats.st_gid, 
+            "group":grp.getgrgid(stats.st_gid)[0], 
+            "mtime":datetime.datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%dT%H:%M:%S")#, "2019-12-23T05:07:26"
+            }]
+
+    
     data = {"items":[
         {"name":".", "mode":"drwxr-xr-x", "size":24576, "uid":0, "user":"STCSYS", "gid":32, "group":"OMVSDFG", "mtime":"2019-12-23T05:07:26"},
         {"name":"..", "mode":"dr-xr-xr-x", "size":0, "uid":0, "user":"STCSYS", "gid":2, "group":"TTY", "mtime":"2019-12-23T14:38:25"},
         {"name":"dummy-dir", "mode":"dr-xr-xr-x", "size":0, "uid":0, "user":"STCSYS", "gid":2, "group":"TTY", "mtime":"2019-12-23T14:38:25"},
-        {"name":"dummy-file", "mode":"-rw-r--r--", "size":0, "uid":0, "user":"STCSYS", "gid":32, "group":"OMVSDFG", "mtime":"2019-06-24T06:14:50"},
+        {"name":"dummy-file", "mode":"-rw-r--r--", "size":0, "uid":0, "user":"STCSYS", "gid":32, "group":"OMVSDFG", "mtime":"2019-06-24T06:14:50"},        
         ],"returnedRows":4,"totalRows":4,"JSONversion":1}
+
+    if len(local_files)>0:
+        data['items'].extend(local_files)
+        data['returnedRows']+=len(local_files)
+        data['totalRows']+=data['returnedRows']
+
     resp = make_response(jsonify(data), 200)
     if 'Authorization' in request.headers:
         resp.set_cookie('LtpaToken2','fakeToken', secure=True, httponly=True)
@@ -134,7 +162,17 @@ def list_files():
 @app.route('/zosmf/restfiles/fs/<path:pth>')
 def content_of_file(pth):
     print(request.data)
-    resp = make_response("dummy content of /%s"%(pth), 200)
+    if "dummy" in pth:
+        resp = make_response("dummy content of /%s"%(pth), 200)
+    else:
+        if request.headers.get("X-IBM-Data-Type","text")=="binary":
+            with open("/"+pth,"rt") as f:
+                content="\n".join(f.readlines())
+        else:
+            with open("/"+pth,"rb") as f:
+                content=f.read()
+
+        resp = make_response(content, 200)
     if 'Authorization' in request.headers:
         resp.set_cookie('LtpaToken2','fakeToken', secure=True, httponly=True)
     return resp
