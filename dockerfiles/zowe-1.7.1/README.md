@@ -151,12 +151,15 @@ docker run -it \
         --rm \
         vvvlc/zowe:latest
 ```
-If 
- - you want to start only a component adjust `LAUNCH_COMPONENT_GROUPS`.
- - run it on different machine
+ - If you want to start only a component adjust `LAUNCH_COMPONENT_GROUPS`.
+ - If run it on different machine
     - pull image on another machine
     - execute `docker run` with updated `-h <hostname>`
-
+ - additional start up options `docker run -it ... vvvlc/zowe:latest <startup options>`
+   - `--only-install` - pause execution of start of container after installation
+   - `--only-config` - pause execution of start of container after configuration
+   - `--post-start` - pause execution of start of container after start of zowe (this is an similar to `docker exec -it zowe /bin/bash`)
+   - `--regenerate-certificates` - enforce regeneration certificates regardles of content of `/root/zowe/current/components/api-mediation/keystore`
 ### on and off mainframe development
 When you want to use a z/OSMF and ZSS on mainframe specify z/OSMF host and port and ZSS host and port. For example z/OSMF is running on mf.acme.net:443 and ZSS mf.acme.net:60012, then
 start zowe docker container with 
