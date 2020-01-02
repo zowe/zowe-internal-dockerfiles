@@ -67,7 +67,7 @@ if [ -e "$CERTS_DIR/server.p12" ]; then
     sed -i "s/externalCertificate=/externalCertificate=$(echo "$CERTS_DIR/server.p12" |  sed 's/\//\\\//g')/" $ZOWE_INSTALL_ROOT/scripts/configure/zowe-install.yaml
     sed -i 's/externalCertificateAlias=/externalCertificateAlias=apiml/' $ZOWE_INSTALL_ROOT/scripts/configure/zowe-install.yaml
 fi
-if [ -e "$CERTS_DIR/*.cer" ]; then
+if ls $CERTS_DIR/*.cer 1> /dev/null 2>&1; then
     sed -i "s/externalCertificateAuthorities=/externalCertificateAuthorities=$(find $CERTS_DIR -name '*.cer' -printf "%p " | sed 's/\//\\\//g')/" $ZOWE_INSTALL_ROOT/scripts/configure/zowe-install.yaml
 fi
 
