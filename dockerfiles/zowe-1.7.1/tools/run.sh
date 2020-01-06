@@ -76,6 +76,9 @@ bash $DEBUG $ZOWE_INSTALL_ROOT/scripts/configure/zowe-configure.sh
 
 #start fakeOSMF
 if [ "$FAKE_OSMF" = "1" ] ; then
+    echo "Creating symlink /u/cust006 -> /root"
+    mkdir /u
+    ln -s /root /u/cust006
     echo preparing certificates for fakeOSMF
     FAKE_OSMF_CA=/root/zowe/tools/fakeosmf.pem
     openssl pkcs12 -in $ZOWE_INSTALL_ROOT/components/api-mediation/keystore/localhost/localhost.keystore.p12 -passin pass:password -nokeys -chain | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > $FAKE_OSMF_CA

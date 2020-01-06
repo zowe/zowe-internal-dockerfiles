@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, getopt, os, stat, pwd, grp, datetime
+import sys, getopt, os, stat, pwd, grp, datetime, warnings
 from flask import Flask, jsonify, abort, make_response, request
 import json
 import re
@@ -127,18 +127,21 @@ def list_files():
     local_files=[]
     pth = request.args.get('path', '/')
 
-    for d in os.listdir(pth):
-        stats=os.stat(os.path.join(pth,d))
-        local_files+=[{
-            "name":d, 
-            "mode": permissions_to_unix_name(stats), #"drwxr-xr-x", 
-            "size": stats.st_size, 
-            "uid": stats.st_uid, 
-            "user":pwd.getpwuid(stats.st_uid)[0], 
-            "gid":stats.st_gid, 
-            "group":grp.getgrgid(stats.st_gid)[0], 
-            "mtime":datetime.datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%dT%H:%M:%S")#, "2019-12-23T05:07:26"
-            }]
+    try:
+        for d in os.listdir(pth):
+            stats=os.stat(os.path.join(pth,d))
+            local_files+=[{
+                "name":d, 
+                "mode": permissions_to_unix_name(stats), #"drwxr-xr-x", 
+                "size": stats.st_size, 
+                "uid": stats.st_uid, 
+                "user":pwd.getpwuid(stats.st_uid)[0], 
+                "gid":stats.st_gid, 
+                "group":grp.getgrgid(stats.st_gid)[0], 
+                "mtime":datetime.datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%dT%H:%M:%S")#, "2019-12-23T05:07:26"
+                }]
+    except Exception as inst:
+        warnings.warn(str(inst))
 
     
     data = {"items":[
