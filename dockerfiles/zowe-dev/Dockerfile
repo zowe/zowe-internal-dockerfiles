@@ -60,3 +60,5 @@ RUN curl -fL https://getcli.jfrog.io | sh && mv jfrog /usr/local/bin
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$DEFAULT_NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$DEFAULT_NODE_VERSION/bin:$PATH
+
+RUN apt-get install make python -y
