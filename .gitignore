@@ -1,0 +1,4 @@
+dockerfiles/*/build_and_start_vlcvi01.sh
+dockerfiles/*/run.sh
+dockerfiles/zowe-1.7.1/.vscode/settings.json
+dockerfiles/*/build_and_run_vlcvi01.sh
