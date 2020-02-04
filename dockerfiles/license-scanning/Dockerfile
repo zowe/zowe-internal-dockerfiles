@@ -1,6 +1,10 @@
 # Jenkins Alpine comes with jenkins agent + java8, user jenkins (1000)
 FROM jenkins/jnlp-slave:alpine
 
+#####################################################
+# version the Dockerfile, so we can do release bump
+LABEL version="0.0.1"
+
 USER root
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
