@@ -17,6 +17,10 @@ node ('ubuntu1804-docker-2c-2g') {
     pipeline.admins.add("markackert", "jackjia.ibm")
 
     pipeline.setup(
+        github: [
+                email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
+                usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_GITHUB_ROBOT_CREDENTIAL,
+        ],
         packageName: 'org.zowe.jenkins-library.zowe-jenkins-license-scan',
         githubTagPrefix: 'zowe-license-scanning',
         docker: [
