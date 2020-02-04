@@ -27,7 +27,7 @@ node ('ubuntu1804-docker-4c-4g') {
             url                        : lib.Constants.DEFAULT_LFJ_DOCKER_REGISTRY_URL,
             usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_DOCKER_REGISTRY_CREDENTIAL,
             // prefix should be synced with credential
-            image                      : "zowehub/zowe-license-scanning".toString(),
+            image                      : "${lib.Constants.DEFAULT_LFJ_DOCKER_IMAGE_PREFIX}/zowe-license-scanning".toString(),
             dockerFile                 : "dockerfiles/license-scanning/Dockerfile"
         ],
         disableArtifactory: true,
