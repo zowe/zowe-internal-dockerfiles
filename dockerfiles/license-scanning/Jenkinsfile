@@ -10,7 +10,7 @@
 
 node ('ubuntu1804-docker-4c-4g') {
 
-    def lib = library("jenkins-library").org.zowe.jenkins_shared_library
+    def lib = library("jenkins-library@user/markackert/docker-build-args").org.zowe.jenkins_shared_library
 
     def pipeline = lib.pipelines.docker.DockerPipeline.new(this)
 
@@ -39,7 +39,9 @@ node ('ubuntu1804-docker-4c-4g') {
     });
 
     // default build stage, dockerFile is {@code "Dockerfile"}
-    pipeline.build()
+    pipeline.build(
+        buildArgs: '--network=host'
+    )
 
     // default publish stage, image is "${lib.Constants.DEFAULT_DOCKER_IMAGE_PREFIX}/zowe-jenkins-base"
     pipeline.publish()
