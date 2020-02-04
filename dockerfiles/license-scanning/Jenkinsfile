@@ -8,7 +8,7 @@
  * Copyright Contributors to the Zowe Project.
  */
 
-node ('ubuntu1804-docker-2c-2g') {
+node ('ubuntu1804-docker-4c-4g') {
 
     def lib = library("jenkins-library").org.zowe.jenkins_shared_library
 
