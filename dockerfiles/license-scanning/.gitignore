@@ -1,0 +1,4 @@
+include/*
+build/
+!include/0001-thread_pthread.c-make-get_main_stack-portable-on-lin.patch
+!include/jenkins-agent-entrypoint
