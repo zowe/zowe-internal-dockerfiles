@@ -11,7 +11,7 @@ RUN useradd -c "Jenkins user" -d /home/${user} -u ${uid} -g ${gid} -m ${user}
 
 #####################################################
 # version the Dockerfile, so we can do release bump
-LABEL version="0.0.3"
+LABEL version="0.0.4"
 
 USER root
 
