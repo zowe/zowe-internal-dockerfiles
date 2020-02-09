@@ -3,6 +3,7 @@
 Cryptic how to run Zowe in IBM LinuxONE environment.
 
 1) How to get LinuxONE environment follow [Getting Started with Linux on Mainframe](https://levelup.gitconnected.com/getting-started-with-linux-on-mainframe-fcd4b19d147d) by Petr Plavjanik.
+   * obtain an instance of [LinuxONE](https://linuxone.cloud.marist.edu/cloud/#/index)
 1) obtain a domain and map it to LinuxONE IP address
 1) obtain [Let's Encrypt](https://letsencrypt.org/) certificate
    1) install certbot
