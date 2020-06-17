@@ -22,7 +22,7 @@ ENV LAUNCH_COMPONENT_GROUPS='GATEWAY,DESKTOP'
 #ENV IPADDRESS=0.0.0.0
 #ENV PAX_FILE=$(wget "https://zowe.jfrog.io/zowe/libs-release-local/org/zowe/nightly/" -qO - | grep zowe- | cut -d'"' -f2 | tail -n 1)
 ENV PAX_FILE=zowe-1.11.0-staging-729-20200511071742.pax
-
+ENV LINUX_HOST='waldevgizaud001.dev.rocketsoftware.com'
 RUN apt-get update && apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless mc wget && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \

@@ -16,7 +16,8 @@ export ZOWE_ZOSMF_PORT=$ZOWE_ZOSMF_PORT
 export USER=$(whoami)
 export userid=$USER
 
-env
+export LINUX_HOST='waldevgizaud001.dev.rocketsoftware.com'
+
 echo "STart testing"
 ls
 echo $ZOWE_INSTALL_ROOT
@@ -48,9 +49,13 @@ fi
 
 #enforce components to be started
 #sed -i 's/LAUNCH_COMPONENT_GROUPS=.*/LAUNCH_COMPONENT_GROUPS='"$LAUNCH_COMPONENT_GROUPS"'/' $ZOWE_INSTANCE_ROOT/instance.env
-
+#ZOWE_EXPLORER_FRAME_ANCESTORS="${ZOWE_EXPLORER_HOST}:*,${ZOWE_IP_ADDRESS}:*"
 #remove ebcdic suffinx from certname - KEYSTORE_CERTIFICATE=${KEYSTORE_DIRECTORY}/${KEY_ALIAS}/${KEY_ALIAS}".keystore.cer-ebcdic"
 sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
+sed -i -e 's/ZOWE_EXPLORER_FRAME_ANCESTORS="${ZOWE_EXPLORER_HOST}:*,${ZOWE_IP_ADDRESS}:*"/ZOWE_EXPLORER_FRAME_ANCESTORS="${ZOWE_EXPLORER_HOST}:*,${ZOWE_IP_ADDRESS}:*,${LINUX_HOST}:*"/g' /root/zowe/instance/instance.env
+
+cat /root/zowe/instance/instance.env
+
 
 find $ZOWE_INSTALL_ROOT/ -type f -name '*.sh' -exec sh -c "chmod +x {}" \;
 
