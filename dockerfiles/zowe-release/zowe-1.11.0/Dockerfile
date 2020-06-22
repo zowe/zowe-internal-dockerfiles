@@ -8,15 +8,15 @@ EXPOSE 9654/tcp
 ENV NODE_HOME='/usr/local'
 ENV ZOWE_JAVA_HOME='/usr'
 
-ENV ZOWE_ZOSMF_HOST='rs22.rocketsoftware.com'
+ENV ZOWE_ZOSMF_HOST='zosmf.host.com'
 ENV ZOWE_ZOSMF_PORT='11443'
-ENV ZOWE_ZSS_HOST='rs28.rocketsoftware.com'
-ENV ZOWE_ZSS_SERVER_PORT='15798'
+ENV ZOWE_ZSS_HOST='zss.host.com'
+ENV ZOWE_ZSS_SERVER_PORT='00000'
 
-ENV ZWED_agent_host='rs28.rocketsoftware.com'
-ENV ZWED_agent_http_port='15798'
+ENV ZWED_agent_host='zwed.host.com'
+ENV ZWED_agent_http_port='00000'
 
-ENV ZOWE_EXPLORER_HOST='waldevgizaud001.dev.rocketsoftware.com'
+ENV ZOWE_EXPLORER_HOST='explorer.host.com'
 ENV ZOWE_IP_ADDRESS=0.0.0.0
 
 ENV LAUNCH_COMPONENT_GROUPS='GATEWAY,DESKTOP'
