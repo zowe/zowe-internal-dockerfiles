@@ -100,6 +100,7 @@ RUN echo "HOSTNAME=${ZOWE_EXPLORER_HOST}" >> /root/zowe/install/bin/zowe-setup-c
 RUN echo "IPADDRESS=${ZOWE_IP_ADDRESS}" >> /root/zowe/install/bin/zowe-setup-certificates.env
 
 RUN /root/zowe/install/bin/zowe-setup-certificates.sh
+RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
 
 RUN rm -f /root/zowe/*.pax && \
     rm -rf /root/zowe/zowe-install/ && \
