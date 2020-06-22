@@ -7,31 +7,28 @@ EXPOSE 9654/tcp
 
 ENV NODE_HOME='/usr/local'
 ENV ZOWE_JAVA_HOME='/usr'
-ENV JAVA_HOME='/usr'
 
 ENV ZOWE_ZOSMF_HOST='rs22.rocketsoftware.com'
 ENV ZOWE_ZOSMF_PORT='11443'
 ENV ZOWE_ZSS_HOST='rs28.rocketsoftware.com'
+ENV ZOWE_ZSS_SERVER_PORT='15798'
+
 ENV ZWED_agent_host='rs28.rocketsoftware.com'
 ENV ZWED_agent_http_port='15798'
-ENV ZOWE_ZSS_SERVER_PORT='15798'
-ENV ZOWE_EXPLORER_HOST=localhost
+
+ENV ZOWE_EXPLORER_HOST='waldevgizaud001.dev.rocketsoftware.com'
 ENV ZOWE_IP_ADDRESS=0.0.0.0
+
 ENV LAUNCH_COMPONENT_GROUPS='GATEWAY,DESKTOP'
 ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 ENV PKCS11_TOKEN_LABEL='KEY_APIML'
-#ENV HOSTNAME=http://waldevgizaud001.dev.rocketsoftware.com/
-#ENV IPADDRESS=0.0.0.0
-#ENV PAX_FILE=$(wget "https://zowe.jfrog.io/zowe/libs-release-local/org/zowe/nightly/" -qO - | grep zowe- | cut -d'"' -f2 | tail -n 1)
-ENV PAX_FILE=zowe-1.11.0-staging-729-20200511071742.pax
-ENV LINUX_HOST='waldevgizaud001.dev.rocketsoftware.com'
-RUN apt-get update && apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless mc wget && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk && \
-    apt-get install -y ant && \
-    apt-get clean;
+	apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless mc wget && \
+	rm -rf /var/lib/apt/lists/* && \
+	apt-get clean;
 	
+ENV JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre'
+
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
 RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
@@ -92,20 +89,21 @@ RUN cd /root/zowe/zowe-install/files && \
     done && \
     rm -f /root/zowe/*.pax 
 
-RUN export PATH=$PATH:$NODE_HOME/bin
-ENV ROOT_DIR=/root/zowe/root
 
-RUN export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java' && \
-	mkdir /root/zowe/instance && \
-    bash /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/root -l /root/zowe/logs && \
-	bash -c "export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre' && /root/zowe/root/bin/zowe-configure-instance.sh -c /root/zowe/instance"
+RUN /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
+	bash -c "export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre' && /root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
 
+RUN sed -i 's/VERIFY_CERTIFICATES=true/VERIFY_CERTIFICATES=false/g' /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/ZOWE_USER_ID=ZWESVUSR/ZOWE_USER_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/ZOWE_GROUP_ID=ZWEADMIN/ZOWE_GROUP_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env
+
+RUN echo "HOSTNAME=${ZOWE_EXPLORER_HOST}" >> /root/zowe/install/bin/zowe-setup-certificates.env
+RUN echo "IPADDRESS=${ZOWE_IP_ADDRESS}" >> /root/zowe/install/bin/zowe-setup-certificates.env
 RUN echo "PKCS11_TOKEN_NAME=${PKCS11_TOKEN_NAME}" >> /root/zowe/root/bin/zowe-setup-certificates.env
 RUN echo "PKCS11_TOKEN_LABEL=${PKCS11_TOKEN_LABEL}" >> /root/zowe/root/bin/zowe-setup-certificates.env
 
-RUN bash -c "export HOSTNAME='localhost' && \
-	export IPADDRESS='0.0.0.0' && \
-	/root/zowe/root/bin/zowe-setup-certificates.sh"
+RUN /root/zowe/install/bin/zowe-setup-certificates.sh
+RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
 
 RUN rm -f /root/zowe/*.pax && \
     rm -rf /root/zowe/zowe-install/ && \
@@ -113,19 +111,6 @@ RUN rm -f /root/zowe/*.pax && \
     apt autoremove -y && \
     rm -rf /var/lib/apt/lists/* 
 
-
-
-#RUN cd /root/zowe/instance/bin/internal && \
-#	bash -c "export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre' && \
-#	pwd && \
-#	ls && \
-#	./run-zowe.sh &"
-
-#HACK: Supposed to use instance but can't instance without keystore
-#RUN /root/zowe/root/components/app-server/bin/configure.sh
-#RUN /root/zowe/root/components/app-server/bin/start.sh
 COPY run.sh /root/zowe/
-#RUN chmod o+rx /root/zowe/run.sh
-
 
 ENTRYPOINT ["/root/zowe/run.sh"]
