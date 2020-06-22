@@ -87,11 +87,7 @@ RUN cd /root/zowe/ && \
     rm -f /root/zowe/*.pax && rm -rf /root/zowe/zowe/ && \
     apt-get purge -y pax && apt autoremove -y && rm -rf /var/lib/apt/lists/* 
 
-RUN INSTALL_DIR=/root/zowe/1.11.0
-RUN export INSTALL_DIR
-RUN /root/zowe/1.11.0/components/app-server/bin/configure.sh
-RUN /root/zowe/1.11.0/components/app-server/bin/start.sh
-#COPY run.sh /root/zowe/
-#RUN chmod o+rx /root/zowe/run.sh
+COPY run.sh /root/zowe/
+RUN chmod o+rx /root/zowe/run.sh
 
 ENTRYPOINT ["/root/zowe/run.sh"]
