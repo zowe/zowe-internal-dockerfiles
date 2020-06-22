@@ -1,13 +1,28 @@
 #!/bin/bash
 # Example usage:
-# sudo ./copy_jwt_to_zss.sh -u TS6330 -rd /u/ts6330/dkr_tmp -c exciting_bhaskara
-# TODO: add comment for flags
+# sudo ./copy_jwt_to_zss.sh -c exciting_bhaskara -u MYTSO -rd /u/mytso/docker_tmp
 TEMP_DIR=/tmp/
 REMOTE_DIR=/tmp/
 OUT_FILE_NAME=jwtsecret.p12
 ZSS_HOST=
 ZSS_USER=REMOTE_USER
 CONTAINER_NAME=container_name
+
+function usage {
+    echo "This script is for transferring the APIML JWT public key created during certificate generation to the Zowe ZSS host."
+    echo ""
+    echo "usage: sudo copy_jwt_to_zss.sh -[OPTION]"
+    echo "or: sudo copy_jwt_to_zss.sh --[OPTION]"
+    echo ""
+    echo "  Options:"
+    echo "     -c, --container   - name of zowe docker container. run 'docker ps' for info"
+    echo "     -h, --host        - Zowe ZSS host address. default: ZOWE_ZSS_HOST environment variable from container"
+    echo "     -o, --out         - nanme of output file to be copied to remote directory. default: jwtsecret.p12"
+    echo "     -u, --username    - scp username for connection to remote (Zowe ZSS) host. default: REMOTE_USER" 
+    echo "     -td, --tempdir    - directory to store temp files from docker container. default: /tmp/"
+    echo "     -rd, --remotedir  - directory to copy APIML JWT public key to on remote host. default: /tmp/"
+    echo ""
+}
 
 while [ "$1" != "" ]; do
   case $1 in
@@ -29,7 +44,11 @@ while [ "$1" != "" ]; do
     -u | --username )     shift
                           ZSS_USER=$1
                           ;;
+    --help )              usage
+                          exit
+                          ;;
     * )                   echo "Invalid command: $1"
+                          usage
                           exit 1
   esac
   shift
