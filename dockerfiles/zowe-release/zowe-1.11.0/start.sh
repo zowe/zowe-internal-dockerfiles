@@ -13,6 +13,7 @@ docker run -it \
     -p 8544:8544 \
 	-p 7553:7553 \
     -h localhost \
+	--add-host=waldevgizaud001.dev.rocketsoftware.com:127.0.0.1 \
     --env ZOWE_ZOSMF_HOST=rs28.rocketsoftware.com \
     --env ZOWE_ZOSMF_PORT=11443 \
     --env ZOWE_ZSS_HOST=rs28.rocketsoftware.com \
