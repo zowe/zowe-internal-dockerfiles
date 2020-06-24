@@ -97,10 +97,11 @@ RUN sed -i 's/VERIFY_CERTIFICATES=true/VERIFY_CERTIFICATES=false/g' /root/zowe/i
 RUN sed -i 's/ZOWE_USER_ID=ZWESVUSR/ZOWE_USER_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env
 RUN sed -i 's/ZOWE_GROUP_ID=ZWEADMIN/ZOWE_GROUP_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env
 
-RUN echo "HOSTNAME=${ZOWE_EXPLORER_HOST}" >> /root/zowe/install/bin/zowe-setup-certificates.env
-RUN echo "IPADDRESS=${ZOWE_IP_ADDRESS}" >> /root/zowe/install/bin/zowe-setup-certificates.env
-RUN echo "PKCS11_TOKEN_NAME=${PKCS11_TOKEN_NAME}" >> /root/zowe/install/bin/zowe-setup-certificates.env
-RUN echo "PKCS11_TOKEN_LABEL=${PKCS11_TOKEN_LABEL}" >> /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/HOSTNAME=.*/HOSTNAME='"${ZOWE_EXPLORER_HOST}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/IPADDRESS=.*/IPADDRESS='"${ZOWE_IP_ADDRESS}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/PKCS11_TOKEN_NAME=.*/PKCS11_TOKEN_NAME='"${PKCS11_TOKEN_NAME}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
+RUN sed -i 's/PKCS11_TOKEN_LABEL=.*/PKCS11_TOKEN_LABEL='"${PKCS11_TOKEN_LABEL}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
+run cat /root/zowe/install/bin/zowe-setup-certificates.env
 
 RUN /root/zowe/install/bin/zowe-setup-certificates.sh
 RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
