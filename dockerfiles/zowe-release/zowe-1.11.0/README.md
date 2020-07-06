@@ -1,7 +1,6 @@
 # Zowe Docker file
 
 ## Requirements
- - certificates
  - docker
  - z/OSMF up and running
  - ZSS and ZSS Cross memory server up and running
@@ -21,49 +20,6 @@ docker run -it -p 60004:60004 -p 60014:8544 -h myhost.acme.net \
 Open browser and test it
  - API Mediation Layer: https://myhost.acme.net:60004
  - ZAF: https://myhost.acme.net:60014
-
-## Preparing certificates for your host
-If already have certificates you can skip this part.
-```
-mkdir certs
-cd certs
-```
-1) Generate certificate keypair using java keytool
- - Replace `myhost.acme.net` with your hostname. 
- - password has to be word password
- - keystore filename server.p12
- - `CN=` has to by valid hostname 
- - `-ext ExtendedKeyUsage=clientAuth,serverAuth`
-```
-keytool -genkeypair -alias apiml -keyalg RSA -keysize 2048 -keystore server.p12 -dname "CN=myhost.acme.net, OU=demo, O=Acme Inc, L=San Jose, S=California, C=US" -keypass password -storepass password -storetype PKCS12 -startdate 2019/09/01 -validity 730 -ext ExtendedKeyUsage=clientAuth,serverAuth
-```
-
-2) Generate CSR using java keytool
- - Replace `myhost.acme.net` with your hostname. 
- - in `SAN` have `myhost.acme.net`.
- - password has to be word password
- - keystore filename server.p12
- - `CN=` has to by valid hostname 
-```
-keytool -certreq -alias apiml -keystore server.p12 -storepass password -file server.csr -keyalg RSA -storetype PKCS12 -dname "CN=myhost.acme.net, OU=demo, O=Acme Inc, L=San Jose, S=California, C=US"  -ext SAN=dns:myhost.acme.net -ext ExtendedKeyUsage=clientAuth,serverAuth
-```
-
- 3) sign your csr (this is done by someone in your organization)
- 7) Save certs next to `server.p12`
-    - server.p7b   (PKCS#7 - contains chain of certificates)
-    - server.cer  (X.509 - your signed certificate)
-	- xxxx.cer     (individual certs from PKCS#7 in separate files)
- 8) Import `server.p7b` into `server.p12`
-    ```
-    keytool -import -alias apiml -trustcacerts -file server.p7b -keystore server.p12 -storepass password
-    ```
- Finally files in folder `certs`
-   - `digicert_global_root_ca.cer`  
-   - `digicert_sha2_secure_server_ca_digicert_global_root_ca_.cer`
-   - `server.cer`
-   - `server.p12`
-  
-   **Note**: you can delete `server.csr` and `server.p7b`, or you can keep them in this folder.
 
 ## Building docker image
 ### Building docker image on Linux
@@ -566,3 +522,53 @@ Open browser and test it
  - API Mediation Layer: https://mf.acme.net:60004
  - API ML Discovery Service: https://mf.acme.net:60003/
  - ZAF: https://mf.acme.net:60014
+
+##  Connecting to a linux virtual machine
+If you are running these docker containers within a linux machine and want to connect to it from your host machine there are a few things you need to add to ensure everything works properly.
+
+This first thing you need to do is add the following flag to your start script
+```	--add-host=[LINUX_HOSTNAME]:127.0.0.1 ```
+So if my linux machine was located at``` dev.mylinuxmachine.com``` my start command would look something like this.
+```cmd
+docker run -it \
+    -p 7554:7554 \
+    -p 8544:8544 \
+	-p 7553:7553 \
+	-h localhost \
+	--add-host=dev.mylinuxmachine.com:127.0.0.1 \
+	--env ZOWE_ZOSMF_HOST=<zosmf_hostname> \
+	--env ZOWE_ZOSMF_PORT=<zosmf_port> \
+	--env ZOWE_ZSS_HOST=<zss_hostname> \
+	--env ZOWE_ZSS_PORT=<zss_port> \
+	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+	zowe/docker:latest $@
+```
+In the Dockerfile you will also need to set the ZOWE_EXPLORER_HOST environmental variables to the linux hostname like so
+```ENV ZOWE_EXPLORER_HOST='dev.mylinuxmachine.com'```
+
+
+## Installing External Applications
+In the case that you would like to use an application that isn't preinstalled to Zowe by default you can install external applications by sharing a volume between your host machine and the docker container.
+
+To do so you can add the following flag to your docker start command.
+```-v [HOST_DIR]:[CONTAINER_DIR]:rw```
+So for me if my applications on my host machine are under the ```~/apps``` directory and I want them to appear in the Docker containers ```/root/zowe/apps``` directory my start command would look something like this.
+```cmd
+docker run -it \
+    -p 7554:7554 \
+    -p 8544:8544 \
+	-p 7553:7553 \
+	-h <hostname> \
+	--env ZOWE_ZOSMF_HOST=<zosmf_hostname> \
+	--env ZOWE_ZOSMF_PORT=<zosmf_port> \
+	--env ZOWE_ZSS_HOST=<zss_hostname> \
+	--env ZOWE_ZSS_PORT=<zss_port> \
+	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+	-v ~/apps:/root/zowe/apps:rw \
+	zowe/docker:latest $@
+```
+Now that you have the shared volume you just need to install the application. To do so you can ssh into the docker container by running the following command
+```docker exec -it [CONTAINER_ID] /root/zowe/instance/bin/install-app.sh ../../apps/[APPLICATION]```
+If the script returns with no errors then you have successfully installed the application and should be able to just refresh the launchbar menu in Zowe and your application should appear in the menu.
+
+
