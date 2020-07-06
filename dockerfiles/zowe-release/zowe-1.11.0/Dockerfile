@@ -100,7 +100,7 @@ RUN sed -i 's/HOSTNAME=.*/HOSTNAME='"${ZOWE_EXPLORER_HOST}"'/g' /root/zowe/insta
 RUN sed -i 's/IPADDRESS=.*/IPADDRESS='"${ZOWE_IP_ADDRESS}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
 RUN sed -i 's/PKCS11_TOKEN_NAME=.*/PKCS11_TOKEN_NAME='"${PKCS11_TOKEN_NAME}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
 RUN sed -i 's/PKCS11_TOKEN_LABEL=.*/PKCS11_TOKEN_LABEL='"${PKCS11_TOKEN_LABEL}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
-run cat /root/zowe/install/bin/zowe-setup-certificates.env
+RUN cat /root/zowe/install/bin/zowe-setup-certificates.env
 
 RUN /root/zowe/install/bin/zowe-setup-certificates.sh
 RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
