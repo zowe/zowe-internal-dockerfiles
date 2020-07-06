@@ -524,7 +524,7 @@ Open browser and test it
  - ZAF: https://mf.acme.net:60014
 
 ##  Connecting to a linux virtual machine
-If you are running these docker containers within a linux virtual machine and want to connect to it from your host machine there are a few things you need to add to ensure everything works properly.
+If you are running these docker containers within a linux machine and want to connect to it from your host machine there are a few things you need to add to ensure everything works properly.
 
 This first thing you need to do is add the following flag to your start script
 ```	--add-host=[LINUX_HOSTNAME]:127.0.0.1 ```
@@ -543,7 +543,7 @@ docker run -it \
 	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
 	zowe/docker:latest $@
 ```
-In the Dockerfile you will also need to ensure that you set the ZOWE_EXPLORER_HOST environmental variables to the linux hostname aswell like so.
+In the Dockerfile you will also need to set the ZOWE_EXPLORER_HOST environmental variables to the linux hostname like so
 ```ENV ZOWE_EXPLORER_HOST='dev.mylinuxmachine.com'```
 
 
@@ -564,7 +564,7 @@ docker run -it \
 	--env ZOWE_ZSS_HOST=<zss_hostname> \
 	--env ZOWE_ZSS_PORT=<zss_port> \
 	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
-	-v /home/skeerthy/apps:/root/zowe/apps:rw \
+	-v ~/apps:/root/zowe/apps:rw \
 	zowe/docker:latest $@
 ```
 Now that you have the shared volume you just need to install the application. To do so you can ssh into the docker container by running the following command
