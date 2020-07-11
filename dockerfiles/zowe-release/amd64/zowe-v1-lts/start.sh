@@ -7,17 +7,16 @@
 # All certificates has to be stored in individual CER files.
 # LAUNCH_COMPONENT_GROUPS valid values are GATEWAY and DESKTOP or GATEWAY,DESKTOP
 
-#cp -r vlcvi01 /mnt/c/temp/vlcvi01
 docker run -it \
-    -p 9654:9654 \
-    -p 9644:9644 \
-    -p 9653:9653 \
+    -p 7553:7553 \
+    -p 7554:7554 \
+    -p 8544:8544 \
     -h localhost \
-	--add-host=zowe.host.com:127.0.0.1 \
+    --add-host=zowe.host.com:127.0.0.1 \
     --env ZOWE_ZOSMF_HOST=zosmf.host.com \
     --env ZOWE_ZOSMF_PORT=11443 \
-    --env ZOWE_ZSS_HOST=zss.host.com \
-    --env ZOWE_ZSS_PORT=11111 \
+    --env ZWED_agent_host=zss.host.com \
+    --env ZWED_agent_http_port=11111 \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
     zowe/docker:latest $@
 

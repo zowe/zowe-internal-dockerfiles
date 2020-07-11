@@ -1,9 +1,119 @@
-FROM loyaltyone/docker-slim-java-node
+FROM openjdk:11-jdk-slim
 
-EXPOSE 60004/tcp
-EXPOSE 9644/tcp
-EXPOSE 9653/tcp
-EXPOSE 9654/tcp
+###
+# start of from loyaltyone/docker-slim-java-node
+###
+
+
+###
+# Dependencies for NodeJS, from: https://github.com/docker-library/buildpack-deps/blob/master/stretch/curl/Dockerfile
+###
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates curl wget \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN set -ex; \
+	if ! command -v gpg > /dev/null; then \
+		apt-get update; \
+		apt-get install -y --no-install-recommends \
+			gnupg \
+			dirmngr \
+		; \
+		rm -rf /var/lib/apt/lists/*; \
+	fi
+
+###
+# NodeJS: https://github.com/nodejs/docker-node/blob/master/8/slim/Dockerfile
+###
+
+RUN groupadd --gid 1000 node \
+  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+
+# gpg keys listed at https://github.com/nodejs/node#release-team
+RUN set -ex \
+  && for key in \
+    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+    FD3A5288F042B6850C66B31F09FE44734EB7990E \
+    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
+    56730D5401028683275BD23C23EFEFE93C4CFFFE \
+    77984A986EBC2AA786BC0F66B01FBB92821C587A \
+  ; do \
+    gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+  done
+
+ENV NODE_VERSION 12.16.1
+
+RUN buildDeps='xz-utils' \
+    && ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+    && case "${dpkgArch##*-}" in \
+      amd64) ARCH='x64';; \
+      ppc64el) ARCH='ppc64le';; \
+      s390x) ARCH='s390x';; \
+      arm64) ARCH='arm64';; \
+      armhf) ARCH='armv7l';; \
+      i386) ARCH='x86';; \
+      *) echo "unsupported architecture"; exit 1 ;; \
+    esac \
+    && set -x \
+    && apt-get update && apt-get install -y $buildDeps --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+    && curl -SLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+    && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+    && apt-get purge -y --auto-remove $buildDeps \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+ENV YARN_VERSION 1.5.1
+
+RUN set -ex \
+  && for key in \
+    6A010C5166006599AA17F08146C2130DFD2497F5 \
+  ; do \
+    gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+  done \
+  && curl -fSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+  && curl -fSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+  && mkdir -p /opt \
+  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
+  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+
+###
+# End of NodeJS Setup
+###
+
+# Cleanup
+RUN apt-get purge -y --auto-remove gnupg dirmngr
+
+# install curl, bash and kms-env 0.3.0
+RUN apt-get update && apt-get install -y --no-install-recommends groff python python-pip iproute2 && \
+  pip install wheel && \
+  pip install setuptools && \
+  pip install awscli && \
+  apt-get purge -y --auto-remove python-pip && \
+  rm -rf /var/lib/apt/lists/*; \
+  npm install -g kms-env@0.3.0 s3-copy@0.0.2
+
+###
+# end of from loyaltyone/docker-slim-java-node
+###
+
+EXPOSE 7553/tcp
+EXPOSE 7554/tcp
+EXPOSE 8544/tcp
 
 ENV NODE_HOME='/usr/local'
 ENV ZOWE_JAVA_HOME='/usr'
@@ -22,15 +132,15 @@ ENV ZOWE_IP_ADDRESS=0.0.0.0
 ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless mc wget && \
+	apt-get install -y --no-install-recommends jq moreutils pax && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean;
-	
-ENV JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre'
 
+RUN mkdir -p /usr/share/man/man1/ && touch /usr/share/man/man1/sh.distrib.1.gz
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
 RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
+#RUN mkdir /root/zowe/ && wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-STAGING/" -qO - | grep zowe- | cut -d'"' -f2 | tail -n 1)
 
 RUN mkdir /root/zowe/ && wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.13.0-PR-1451/zowe-1.13.0-pr-1451-1-20200622225522.pax" -O /root/zowe/zowe.pax
 
@@ -90,7 +200,7 @@ RUN cd /root/zowe/zowe-install/files && \
 
 
 RUN /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
-	bash -c "export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64/jre' && /root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
+	bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
 
 RUN sed -i 's/VERIFY_CERTIFICATES=true/VERIFY_CERTIFICATES=false/g' /root/zowe/install/bin/zowe-setup-certificates.env
 RUN sed -i 's/ZOWE_USER_ID=ZWESVUSR/ZOWE_USER_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env
@@ -108,9 +218,11 @@ RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
 RUN rm -f /root/zowe/*.pax && \
     rm -rf /root/zowe/zowe-install/ && \
     apt-get purge -y pax && \
-    apt autoremove -y && \
+    apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* 
 
 COPY run.sh /root/zowe/
+# Could be modified during runtime, back it up.
+RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
 
 ENTRYPOINT ["/root/zowe/run.sh"]
