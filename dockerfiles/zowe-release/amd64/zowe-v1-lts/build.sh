@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build --no-cache -t zowe/docker:latest$1 .
+docker build -f Dockerfile.manual --no-cache -t zowe/docker:latest$1 .
