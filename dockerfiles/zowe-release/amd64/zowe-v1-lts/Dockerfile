@@ -141,8 +141,7 @@ RUN echo "dash dash/sh boolean false" | debconf-set-selections
 RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 RUN mkdir /root/zowe
-RUN echo "paxfile= $PAX_FILE"
-COPY $PAX_FILE /root/zowe
+COPY ./.pax/zowe.pax /root/zowe
 RUN ls -ltr /root/zowe
 
 RUN cd /root/zowe/ && \
