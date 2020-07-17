@@ -17,7 +17,7 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.13.0-PR-1451/zowe-1.13.0-pr-1451-1-20200622225522.pax" -O /root/zowe/zowe.pax
+COPY zowe.pax /root/zowe/
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \
