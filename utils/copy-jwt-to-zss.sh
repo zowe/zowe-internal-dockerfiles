@@ -1,6 +1,6 @@
 #!/bin/bash
 # Example usage:
-# sudo ./copy_jwt_to_zss.sh -c exciting_bhaskara -u MYTSO -rd /u/mytso/docker_tmp
+# sudo ./copy-jwt-to-zss.sh -c exciting_bhaskara -u MYTSO -rd /u/mytso/docker_tmp
 TEMP_DIR=/tmp/
 REMOTE_DIR=/tmp/
 OUT_FILE_NAME=jwtsecret.p12
@@ -14,8 +14,8 @@ P11_TKN_LABEL=KEY_APIML
 function usage {
     echo "This script is for transferring the APIML JWT public key created during certificate generation to the Zowe ZSS host."
     echo ""
-    echo "usage: sudo copy_jwt_to_zss.sh -[OPTION]"
-    echo "or: sudo copy_jwt_to_zss.sh --[OPTION]"
+    echo "usage: sudo copy-jwt-to-zss.sh -[OPTION]"
+    echo "or: sudo copy-jwt-to-zss.sh --[OPTION]"
     echo ""
     echo "  Options:"
     echo "     -c [name], --container [name]       - name of zowe docker container. run 'docker ps' for info"
