@@ -1,4 +1,4 @@
-FROM rsqa/zowecicd-node12-java11:amd64
+FROM rsqa/zowecicd-node12-java11:s390x
 
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
@@ -17,7 +17,12 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
+RUN apt-get update && \
+	apt-get install -y --no-install-recommends jq moreutils pax openjdk-11-jdk-headless && \
+	rm -rf /var/lib/apt/lists/* && \
+	apt-get clean;
+
+COPY zowe.pax /root/zowe/
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \

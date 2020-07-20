@@ -21,5 +21,3 @@ docker run -it \
     --env ZOSMF_PORT=11443 \
     --env ZWED_agent_http_port=8542 \
     rsqa/zowe-v1-lts:amd64 $@
-
-    

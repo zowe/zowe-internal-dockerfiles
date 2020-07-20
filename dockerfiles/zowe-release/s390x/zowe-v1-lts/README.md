@@ -7,15 +7,20 @@
 
 **TL;DR**:
 ```sh
-docker pull zowe/docker:latest
-docker run -it -p 60004:7554 -p 60014:8544 -h myhost.acme.net \
-  --env ZOWE_ZOSMF_HOST=mf.acme.net \
-  --env ZOWE_ZOSMF_PORT=1443 \
-  --env ZWED_agent_host=mf.acme.net \
-  --env ZWED_agent_http_port=11111 \
-  --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
-  --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \ 
-  zowe:latest
+docker pull rsqa/zowe-v1-lts:s390x
+docker run -it \
+    -p 7553:7553 \
+    -p 7554:7554 \
+    -p 8544:8544 \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
+    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \
+    rsqa/zowe-v1-lts:s390x
 ```
 Open browser and test it
  - API Mediation Layer: https://myhost.acme.net:60004
@@ -23,18 +28,10 @@ Open browser and test it
 
 ## Building docker image
 ### Building docker image on Linux
-Navigate to any subfolder of zowe-release for your computer architecture, such as s390x for zlinux or amd64 for intel linux.
-For example, with an intel linux machine, to build v1 LTS you can execute:
+Navigate to any subfolder of zowe-release for your computer architecture, such as s390x for zlinux or s390x for intel linux.
+For example, with a zlinux machine, to build v1 LTS you can execute:
 ```sh
-cd dockerfiles/zowe-release/amd64/zowe-v1-lts
-docker build -t zowe/docker:latest .
-```
-
-### Building docker image on Windows
-Navigate to any subfolder of zowe-release/amd64.
-For example, to build v1 LTS you can execute:
-```powershell
-cd dockerfiles/zowe-release/amd64/zowe-v1-lts
+cd dockerfiles/zowe-release/s390x/zowe-v1-lts
 docker build -t zowe/docker:latest .
 ```
 
@@ -42,8 +39,9 @@ docker build -t zowe/docker:latest .
  - prepare folder with certificates, you should have it from previous step.
  - adjust `docker start` command
    - `-h <hostname>` - hostname of docker host (hostname of your laptop eg: myhost.acme.net)
-   - `ZOWE_ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
-   - `ZOWE_ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
+   - `ZOWE_IP_ADDRESS=<ip>` - The IP which the servers should bind to. Should not be a loopback address.
+   - `ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
+   - `ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
    - `ZWED_agent_host=<zss_hostname>` - ZSS host (eg mf.acme.net)
    - `ZWED_agent_http_port=<zss_port>` - ZSS port z/OSMF port eg (60012)
    - `source=<folder with certs>` - folder where you have your certs
@@ -65,33 +63,21 @@ If you want to
     - move image to different machine
     -  execute `docker start` with updated `-h <hostname>`
 
-### Windows
- - prepare folder with certificates 
-   I have my certificates in `c:\workspaces\ZooTainers-Hackathon2019\certs`
-```
-c:\workspaces\ZooTainers-Hackathon2019\certs>dir
- Volume in drive C is Windows
- Volume Serial Number is 5EB2-BB6A
-
- Directory of c:\workspaces\ZooTainers-Hackathon2019\certs
-
-10/10/2019  09:35 AM    <DIR>          .
-10/10/2019  09:35 AM    <DIR>          ..
-10/10/2019  09:12 AM             1,338 digicert_global_root_ca.cer
-10/10/2019  09:12 AM             1,647 digicert_sha2_secure_server_ca_digicert_global_root_ca_.cer
-10/10/2019  09:12 AM             2,472 server.cer
-10/10/2019  09:12 AM             5,965 server.p12
-               4 File(s)         11,422 bytes
-               2 Dir(s)  179,745,226,752 bytes free
-```
-An example of `docker start` command
-```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZWED_agent_host=mf.acme.net --env ZWED_agent_http_port=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs zowe/docker:latest
-```
-
 ### Linux
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZWED_agent_host=mf.acme.net --env ZWED_agent_http_port=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/john/certs,target=/root/zowe/certs zowe/docker:latest
+docker run -it \
+    -p 60003:7553 \
+    -p 60004:7554 \
+    -p 60014:8544 \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
+    --mount type=bind,source=/home/john/certs,target=/root/zowe/certs \
+    rsqa/zowe-v1-lts:s390x
 ```
 
 #### Expected output
@@ -121,14 +107,15 @@ docker run -it \
     -p 7554:7554 \
     -p 8544:8544 \
 	-p 7553:7553 \
-	-h <hostname> \
-	--env ZOWE_ZOSMF_HOST=<zosmf_hostname> \
-	--env ZOWE_ZOSMF_PORT=<zosmf_port> \
-	--env ZWED_agent_host=<zss_hostname> \
-	--env ZWED_agent_http_port=<zss_port> \
-	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
 	-v ~/apps:/root/zowe/apps:rw \
-	zowe/docker:latest $@
+    rsqa/zowe-v1-lts:s390x
 ```
 
 Afterward, these plugins must be installed to the app server. Simply ssh into the docker container to run the install-app.sh script, like so:

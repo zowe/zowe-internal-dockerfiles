@@ -12,7 +12,7 @@ sed -i 's/ZOWE_GROUP_ID=ZWEADMIN/ZOWE_GROUP_ID=root/g' /root/zowe/install/bin/zo
 if [ -z "$VERIFY_CERTIFICATES" ]; then
   sed -i 's/VERIFY_CERTIFICATES=true/VERIFY_CERTIFICATES=false/g' /root/zowe/install/bin/zowe-setup-certificates.env
 fi
-sed -i 's/HOSTNAME=.*/HOSTNAME='"${HOSTNAME}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
+sed -i 's/HOSTNAME=.*/HOSTNAME='"${ZOWE_EXPLORER_HOST}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
 sed -i 's/IPADDRESS=.*/IPADDRESS='"${ZOWE_IP_ADDRESS}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
 
 #sed -i 's/HOSTNAME=.*/HOSTNAME='"${ZOWE_EXPLORER_HOST}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
