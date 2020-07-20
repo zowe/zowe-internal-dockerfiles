@@ -17,6 +17,8 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
+RUN mkdir /root/zowe/utils
+COPY utils/* /root/zowe/utils/
 COPY zowe.pax /root/zowe/
 
 RUN cd /root/zowe/zowe-install && \

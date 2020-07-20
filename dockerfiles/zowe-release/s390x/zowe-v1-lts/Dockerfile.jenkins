@@ -22,6 +22,8 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean;
 
+RUN mkdir /root/zowe/utils
+COPY utils/* /root/zowe/utils/
 COPY zowe.pax /root/zowe/
 
 RUN cd /root/zowe/zowe-install && \

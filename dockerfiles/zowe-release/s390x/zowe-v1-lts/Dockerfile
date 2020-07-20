@@ -22,6 +22,8 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean;
 
+RUN mkdir /root/zowe/utils
+COPY utils/* /root/zowe/utils/
 RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
 
 RUN cd /root/zowe/zowe-install && \
