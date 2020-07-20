@@ -8,7 +8,7 @@ EXPOSE 8544/tcp
 #ENV ZOWE_ZSS_HOST='zss.host.com'
 #ENV ZWED_agent_host='zwed.host.com'
 #ENV ZOWE_EXPLORER_HOST='explorer.host.com'
-ENV ZOWE_IP_ADDRESS=0.0.0.0
+#ENV ZOWE_IP_ADDRESS=0.0.0.0
 
 ENV ZOWE_ZOSMF_PORT='11443'
 #ENV ZOWE_ZSS_SERVER_PORT='00000'
@@ -17,7 +17,7 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.13.0-PR-1451/zowe-1.13.0-pr-1451-1-20200622225522.pax" -O /root/zowe/zowe.pax
+RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \
@@ -62,20 +62,6 @@ RUN cd /root/zowe/zowe-install/files && \
 
 RUN /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
 	bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
-
-RUN sed -i 's/VERIFY_CERTIFICATES=true/VERIFY_CERTIFICATES=false/g' /root/zowe/install/bin/zowe-setup-certificates.env && \
-    sed -i 's/ZOWE_USER_ID=ZWESVUSR/ZOWE_USER_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env && \
-    sed -i 's/ZOWE_GROUP_ID=ZWEADMIN/ZOWE_GROUP_ID=root/g' /root/zowe/install/bin/zowe-setup-certificates.env && \
-    sed -i 's/IPADDRESS=.*/IPADDRESS='"${ZOWE_IP_ADDRESS}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
-
-#RUN sed -i 's/HOSTNAME=.*/HOSTNAME='"${ZOWE_EXPLORER_HOST}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
-#RUN sed -i 's/PKCS11_TOKEN_NAME=.*/PKCS11_TOKEN_NAME='"${PKCS11_TOKEN_NAME}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
-#RUN sed -i 's/PKCS11_TOKEN_LABEL=.*/PKCS11_TOKEN_LABEL='"${PKCS11_TOKEN_LABEL}"'/g' /root/zowe/install/bin/zowe-setup-certificates.env
-
-#RUN cat /root/zowe/install/bin/zowe-setup-certificates.env
-
-RUN /root/zowe/install/bin/zowe-setup-certificates.sh
-RUN sed -i 's/-ebcdic//' /global/zowe/keystore/zowe-certificates.env
 
 RUN rm -f /root/zowe/*.pax && \
     rm -rf /root/zowe/zowe-install/ && \

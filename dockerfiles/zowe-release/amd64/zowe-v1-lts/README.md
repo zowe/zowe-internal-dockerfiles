@@ -7,15 +7,20 @@
 
 **TL;DR**:
 ```sh
-docker pull zowe/docker:latest
-docker run -it -p 60004:7554 -p 60014:8544 -h myhost.acme.net \
-  --env ZOWE_ZOSMF_HOST=mf.acme.net \
-  --env ZOWE_ZOSMF_PORT=1443 \
-  --env ZWED_agent_host=mf.acme.net \
-  --env ZWED_agent_http_port=11111 \
-  --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
-  --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \ 
-  zowe:latest
+docker pull rsqa/zowe-v1-lts:amd64
+docker run -it \
+    -p 7553:7553 \
+    -p 7554:7554 \
+    -p 8544:8544 \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
+    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \
+    rsqa/zowe-v1-lts:amd64
 ```
 Open browser and test it
  - API Mediation Layer: https://myhost.acme.net:60004
@@ -42,8 +47,9 @@ docker build -t zowe/docker:latest .
  - prepare folder with certificates, you should have it from previous step.
  - adjust `docker start` command
    - `-h <hostname>` - hostname of docker host (hostname of your laptop eg: myhost.acme.net)
-   - `ZOWE_ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
-   - `ZOWE_ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
+   - `ZOWE_IP_ADDRESS=<ip>` - The IP which the servers should bind to. Should not be a loopback address.
+   - `ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
+   - `ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
    - `ZWED_agent_host=<zss_hostname>` - ZSS host (eg mf.acme.net)
    - `ZWED_agent_http_port=<zss_port>` - ZSS port z/OSMF port eg (60012)
    - `source=<folder with certs>` - folder where you have your certs
@@ -86,12 +92,36 @@ c:\workspaces\ZooTainers-Hackathon2019\certs>dir
 ```
 An example of `docker start` command
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZWED_agent_host=mf.acme.net --env ZWED_agent_http_port=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs zowe/docker:latest
+docker run -it \
+    -p 60003:7553 \
+    -p 60004:7554 \
+    -p 60014:8544 \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
+    --mount type=bind,c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs\
+    rsqa/zowe-v1-lts:amd64
 ```
 
 ### Linux
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -p 60003:7553 -h myhost.acme.net --env ZOWE_ZOSMF_HOST=mf.acme.net --env ZOWE_ZOSMF_PORT=1443 --env ZWED_agent_host=mf.acme.net --env ZWED_agent_http_port=60012 --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --mount type=bind,source=/home/john/certs,target=/root/zowe/certs zowe/docker:latest
+docker run -it \
+    -p 60003:7553 \
+    -p 60004:7554 \
+    -p 60014:8544 \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
+    --mount type=bind,source=/home/john/certs,target=/root/zowe/certs \
+    rsqa/zowe-v1-lts:amd64
 ```
 
 #### Expected output
@@ -121,14 +151,15 @@ docker run -it \
     -p 7554:7554 \
     -p 8544:8544 \
 	-p 7553:7553 \
-	-h <hostname> \
-	--env ZOWE_ZOSMF_HOST=<zosmf_hostname> \
-	--env ZOWE_ZOSMF_PORT=<zosmf_port> \
-	--env ZWED_agent_host=<zss_hostname> \
-	--env ZWED_agent_http_port=<zss_port> \
-	--env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    -h myhost.acme.net \
+    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+    --env ZOSMF_HOST=your.zosmainframe.com \
+    --env ZWED_agent_host=your.zosmainframe.com \
+    --env ZOSMF_PORT=11443 \
+    --env ZWED_agent_http_port=8542 \
 	-v ~/apps:/root/zowe/apps:rw \
-	zowe/docker:latest $@
+    rsqa/zowe-v1-lts:amd64
 ```
 
 Afterward, these plugins must be installed to the app server. Simply ssh into the docker container to run the install-app.sh script, like so:
