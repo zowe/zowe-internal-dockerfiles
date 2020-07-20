@@ -8,11 +8,14 @@
 # LAUNCH_COMPONENT_GROUPS valid values are GATEWAY and DESKTOP or GATEWAY,DESKTOP
 
 
+DISCOVERY_PORT=7553
+GATEWAY_PORT=7554
+APP_SERVER_PORT=8544
 
 docker run -it \
-    -p 7553:7553 \
-    -p 7554:7554 \
-    -p 8544:8544 \
+    -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} \
+    -p ${GATEWAY_PORT}:${GATEWAY_PORT} \
+    -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
     -h your_hostname \
     --env ZOWE_IP_ADDRESS=your.external.ip \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
@@ -20,4 +23,7 @@ docker run -it \
     --env ZWED_agent_host=your.zosmainframe.com \
     --env ZOSMF_PORT=11443 \
     --env ZWED_agent_http_port=8542 \
+    --env GATEWAY_PORT=${GATEWAY_PORT} \
+    --env DISCOVERY_PORT=${DISCOVERY_PORT} \
+    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
     rsqa/zowe-v1-lts:s390x $@
