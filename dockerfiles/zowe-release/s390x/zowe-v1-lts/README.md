@@ -8,23 +8,35 @@
 **TL;DR**:
 ```sh
 docker pull rsqa/zowe-v1-lts:s390x
+export DISCOVERY_PORT=7553
+export GATEWAY_PORT=7554
+export APP_SERVER_PORT=8544
+
+#add non-default settings with --env, using same properties as seen in instance.env
+#   --env ZOWE_ZLUX_TELNET_PORT=23
 docker run -it \
-    -p 7553:7553 \
-    -p 7554:7554 \
-    -p 8544:8544 \
-    -h myhost.acme.net \
-    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    -h your_hostname \
+    --env ZOWE_IP_ADDRESS=your.external.ip \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
     --env ZOSMF_HOST=your.zosmainframe.com \
     --env ZWED_agent_host=your.zosmainframe.com \
     --env ZOSMF_PORT=11443 \
     --env ZWED_agent_http_port=8542 \
-    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs vvvlc/ \
+    --expose ${DISCOVERY_PORT} \
+    --expose ${GATEWAY_PORT} \
+    --expose ${APP_SERVER_PORT} \
+    -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} \
+    -p ${GATEWAY_PORT}:${GATEWAY_PORT} \
+    -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
+    --env GATEWAY_PORT=${GATEWAY_PORT} \
+    --env DISCOVERY_PORT=${DISCOVERY_PORT} \
+    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
+    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
     rsqa/zowe-v1-lts:s390x
 ```
 Open browser and test it
- - API Mediation Layer: https://myhost.acme.net:60004
- - ZAF: https://myhost.acme.net:60014
+ - API Mediation Layer: https://myhost.acme.net:7554
+ - ZAF: https://myhost.acme.net:8544
 
 ## Building docker image
 ### Building docker image on Linux
@@ -32,6 +44,8 @@ Navigate to any subfolder of zowe-release for your computer architecture, such a
 For example, with a zlinux machine, to build v1 LTS you can execute:
 ```sh
 cd dockerfiles/zowe-release/s390x/zowe-v1-lts
+mkdir utils
+cp ../../../../utils/* ./utils
 docker build -t zowe/docker:latest .
 ```
 
@@ -53,7 +67,7 @@ docker build -t zowe/docker:latest .
 For example:
 
 ```cmd
-docker run -it -p 60004:60004 -p 60014:8544 -h <hostname> --env ZOWE_ZOSMF_HOST=<zosmf_hostname> --env ZOWE_ZOSMF_PORT=<zosmf_port> --env ZWED_agent_host=<zss_hostname> --env ZWED_agent_http_port=<zss_port> --env LAUNCH_COMPONENT_GROUPS=<DESKTOP or GATEWAY> --mount type=bind,source=<folder with certs>,target=/root/zowe/certs zowe/docker:latest
+DISCOVERY_PORT=7553 GATEWAY_PORT=7554 APP_SERVER_PORT=8544 docker run -it -h your_hostname --env ZOWE_IP_ADDRESS=your.external.ip --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --env ZOSMF_HOST=your.zosmainframe.com --env ZWED_agent_host=your.zosmainframe.com --env ZOSMF_PORT=11443 --env ZWED_agent_http_port=8542 --expose ${DISCOVERY_PORT} --expose ${GATEWAY_PORT} --expose ${APP_SERVER_PORT} -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} -p ${GATEWAY_PORT}:${GATEWAY_PORT} -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} --env GATEWAY_PORT=${GATEWAY_PORT} --env DISCOVERY_PORT=${DISCOVERY_PORT} --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} --mount type=bind,source=<folder with certs>,target=/root/zowe/certs rsqa/zowe-v1-lts:s390x
 ```
 
 If you want to 
@@ -65,18 +79,28 @@ If you want to
 
 ### Linux
 ```cmd
+export DISCOVERY_PORT=7553
+export GATEWAY_PORT=7554
+export APP_SERVER_PORT=8544
+
 docker run -it \
-    -p 60003:7553 \
-    -p 60004:7554 \
-    -p 60014:8544 \
-    -h myhost.acme.net \
-    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    -h your_hostname \
+    --env ZOWE_IP_ADDRESS=your.external.ip \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
     --env ZOSMF_HOST=your.zosmainframe.com \
     --env ZWED_agent_host=your.zosmainframe.com \
     --env ZOSMF_PORT=11443 \
     --env ZWED_agent_http_port=8542 \
-    --mount type=bind,source=/home/john/certs,target=/root/zowe/certs \
+    --expose ${DISCOVERY_PORT} \
+    --expose ${GATEWAY_PORT} \
+    --expose ${APP_SERVER_PORT} \
+    -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} \
+    -p ${GATEWAY_PORT}:${GATEWAY_PORT} \
+    -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
+    --env GATEWAY_PORT=${GATEWAY_PORT} \
+    --env DISCOVERY_PORT=${DISCOVERY_PORT} \
+    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
+    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
     rsqa/zowe-v1-lts:s390x
 ```
 
@@ -89,9 +113,9 @@ put something here
 
 ## Test it
 Open browser and test it
- - API Mediation Layer: https://mf.acme.net:60004
- - API ML Discovery Service: https://mf.acme.net:60003/
- - ZAF: https://mf.acme.net:60014
+ - API Mediation Layer: https://mf.acme.net:7554
+ - API ML Discovery Service: https://mf.acme.net:7553/
+ - ZAF: https://mf.acme.net:8544
 
 ## Using Zowe's Docker with Zowe products & plugins
 To use Zowe-based software with the docker container, you must make that software visible to the Zowe that is within Docker by mapping a folder on your host machine to a folder visible within the docker container.
@@ -103,17 +127,27 @@ You can have multiple such volumes, but for Zowe Application Framework plugins, 
 An example is to add Apps to the Zowe Docker by sharing the host directory `~/apps`, which full of Application Framework plugins.
 
 ```cmd
+export DISCOVERY_PORT=7553
+export GATEWAY_PORT=7554
+export APP_SERVER_PORT=8544
+
 docker run -it \
-    -p 7554:7554 \
-    -p 8544:8544 \
-	-p 7553:7553 \
-    -h myhost.acme.net \
-    --env ZOWE_IP_ADDRESS=your.non.loopback.ip \
+    -h your_hostname \
+    --env ZOWE_IP_ADDRESS=your.external.ip \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
     --env ZOSMF_HOST=your.zosmainframe.com \
     --env ZWED_agent_host=your.zosmainframe.com \
     --env ZOSMF_PORT=11443 \
     --env ZWED_agent_http_port=8542 \
+    --expose ${DISCOVERY_PORT} \
+    --expose ${GATEWAY_PORT} \
+    --expose ${APP_SERVER_PORT} \
+    -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} \
+    -p ${GATEWAY_PORT}:${GATEWAY_PORT} \
+    -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
+    --env GATEWAY_PORT=${GATEWAY_PORT} \
+    --env DISCOVERY_PORT=${DISCOVERY_PORT} \
+    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
 	-v ~/apps:/root/zowe/apps:rw \
     rsqa/zowe-v1-lts:s390x
 ```
