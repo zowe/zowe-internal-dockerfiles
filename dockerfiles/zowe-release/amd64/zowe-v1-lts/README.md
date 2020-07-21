@@ -219,6 +219,6 @@ If the script returns with rc=0, then the plugin install succeded and the plugin
 If you have an instance of Zowe on your host machine that you want to use you can mount a shared volume and set the location of the shared volume as an environmental variable called EXTERNAL_INSTANCE. This can by done by adding these two flags to your docker start script.
 
 ```
-	-v ~/my_instance:/root/zowe/external_instance:rw \
-    --env EXTERNAL_INSTANCE=/root/zowe/external_instance \
+-v ~/my_instance:/root/zowe/external_instance:rw \
+--env EXTERNAL_INSTANCE=/root/zowe/external_instance \
 ```
