@@ -213,3 +213,12 @@ docker run -it \
 Afterward, these plugins must be installed to the app server. Simply ssh into the docker container to run the install-app.sh script, like so:
 ```docker exec -it [CONTAINER_ID] /root/zowe/instance/bin/install-app.sh ../../apps/[APPLICATION]```
 If the script returns with rc=0, then the plugin install succeded and the plugin can be used by refreshing the app server via either clicking "Refresh Applications" in the launchbar menu of the Zowe Desktop, or by doing an HTTP GET call to /plugins?refresh=true to the app server.
+
+
+## Using an external instance of Zowe
+If you have an instance of Zowe on your host machine that you want to use you can mount a shared volume and set the location of the shared volume as an environmental variable called EXTERNAL_INSTANCE. This can by done by adding these two flags to your docker start script.
+
+```
+	-v ~/my_instance:/root/zowe/external_instance:rw \
+    --env EXTERNAL_INSTANCE=/root/zowe/external_instance \
+```
