@@ -68,7 +68,7 @@ docker build -t zowe/docker:latest .
    - `ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
    - `ZWED_agent_host=<zss_hostname>` - ZSS host (eg mf.acme.net)
    - `ZWED_agent_http_port=<zss_port>` - ZSS port z/OSMF port eg (60012)
-   - `source=<folder with certs>,target=<target dir within image>` - local folder containing external certs, and their target dir in the image
+   - `source=<folder with certs>,target=<target dir within image>` - local folder containing external certs, and their target dir in the image (optional)
    - `EXTERNAL_CERTIFICATE=<keystore.p12>` - location of p12 keystore. (optional)
    - `EXTERNAL_CERTIFICATE_ALIAS=<alias>` - valid alias within keystore. (optional)
    - `EXTERNAL_CERTIFICATE_AUTHORITIES=<CA.cer>` - location of x509 Certificate Authority (optional)
