@@ -1,3 +1,4 @@
 src
 .editorconfig
+rollup.config.js
 tsconfig.json
