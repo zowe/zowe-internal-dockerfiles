@@ -34,7 +34,7 @@ export async function convert(path: string): Promise<void> {
   if (stats.isDirectory()) {
     const files = await fs.readdir(path);
     for (const file of files) {
-      if (['node_modules', '.git'].indexOf(file) !== -1) {
+      if (['.git'].indexOf(file) !== -1) {
         continue;
       }
       const filePath = join(path, file);
