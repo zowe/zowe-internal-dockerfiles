@@ -49,7 +49,7 @@ async function convertFileIfNeeded(file: string): Promise<void> {
   const { encoding: type, data } = await detectEncoding(file);
   if (type === 'IBM-1047') {
     await convertFile(file, data);
-    console.log(`File ${file} converted to ISO-8558-1`);
+    console.log(`File ${file} converted to ISO-8859-1`);
   }
 }
 
@@ -84,7 +84,7 @@ async function detectEncoding(filename: string): Promise<ScanResult> {
     }
   }
   if (debug) {
-    showCounts(iso8859Counts, 'ISO-8558-1');
+    showCounts(iso8859Counts, 'ISO-8859-1');
     showCounts(ibm1047Counts, 'IBM-1047');
   }
   if (0 == (iso8859Counts[CharClass.Unprintable] + iso8859Counts[CharClass.CarriageControl] + iso8859Counts[CharClass.AsciiPrintable] + iso8859Counts[CharClass.NonAsciiPrintable])) {
