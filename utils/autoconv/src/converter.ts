@@ -15,7 +15,7 @@ import { IBM1047_to_ISO8859_1 } from './charmap';
 let debugCharError = false;
 let debugLimit = 10;
 let debug = false;
-let badCharLimit = 10;
+let badCharLimit = 100;
 
 interface ScanResult {
   encoding: Encoding;
