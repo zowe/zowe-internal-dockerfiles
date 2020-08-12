@@ -6,6 +6,26 @@ if [ -n "$HOSTNAME" ]; then
   fi
 fi
 
+if [ -z "${EXTERNAL_INSTANCE}" ]; then
+	if [ -z "${INSTANCE_DIR}" ]; then
+		export INSTANCE_DIR=/root/zowe/instance
+	fi
+else
+	export INSTANCE_DIR=$EXTERNAL_INSTANCE
+fi
+
+if [ -d "/root/zowe/apps" ]; then
+	cd /root/zowe/apps
+	for D in */;
+	do
+		if test -f "$D/autoinstall.sh"; then
+			./$D/autoinstall.sh
+		fi
+		if test -f "$D/pluginDefinition.json"; then
+			$INSTANCE_DIR/bin/install-app.sh /root/zowe/apps/$D
+		fi
+	done
+fi
 
 if [ ! -d "/root/zowe/certs" ]; then
     input1="/root/zowe/install/bin/zowe-setup-certificates.env.bkp"
