@@ -146,9 +146,6 @@ function convertData(data: Buffer): void {
   for (let pos = 0; pos < data.length; pos++) {
     const ch = data[pos];
     let converted = IBM1047_to_ISO8859_1[ch];
-    if (converted === 0x85) {
-      converted = 0x0a;
-    }
     data[pos] = converted;
   }
 }
