@@ -45,7 +45,7 @@ For example, with a zlinux machine, to build v1 LTS you can execute:
 ```sh
 cd dockerfiles/zowe-release/s390x/zowe-v1-lts
 mkdir utils
-cp ../../../../utils/* ./utils
+cp -r ../../../../utils/* ./utils
 docker build -t zowe/docker:latest .
 ```
 
