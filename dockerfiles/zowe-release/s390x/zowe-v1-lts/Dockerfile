@@ -23,7 +23,13 @@ RUN apt-get update && \
 	apt-get clean;
 
 RUN mkdir /root/zowe/utils
-COPY utils/* /root/zowe/utils/
+COPY utils/ /root/zowe/utils/
+RUN cd /root/zowe/utils/autoconv && \
+    npm install && \
+    npm run build && \
+    rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
+    ln -s ./autoconv/bin/autoconv ../autoconv.sh
+
 RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
 
 RUN cd /root/zowe/zowe-install && \

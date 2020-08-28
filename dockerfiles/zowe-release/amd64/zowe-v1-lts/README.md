@@ -45,7 +45,7 @@ For example, with an intel linux machine, to build v1 LTS you can execute:
 ```sh
 cd dockerfiles/zowe-release/amd64/zowe-v1-lts
 mkdir utils
-cp ../../../../utils/* ./utils
+cp -r ../../../../utils/* ./utils
 docker build -t zowe/docker:latest .
 ```
 
