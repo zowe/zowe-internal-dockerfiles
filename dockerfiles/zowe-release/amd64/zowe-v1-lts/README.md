@@ -35,8 +35,8 @@ docker run -it \
     rsqa/zowe-v1-lts:amd64
 ```
 Open browser and test it
- - API Mediation Layer: https://myhost.acme.net:60004
- - ZAF: https://myhost.acme.net:60014
+ - API Mediation Layer: https://myhost.acme.net:7554
+ - App Framework: https://myhost.acme.net:8544
 
 ## Building docker image
 ### Building docker image on Linux
@@ -118,24 +118,24 @@ set APP_SERVER_PORT=8544
 
 #add non-default settings with --env, using same properties as seen in instance.env
 #   --env ZOWE_ZLUX_TELNET_PORT=23
-docker run -it \
-    -h your_hostname \
-    --env ZOWE_IP_ADDRESS=your.external.ip \
-    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
-    --env ZOSMF_HOST=your.zosmainframe.com \
-    --env ZWED_agent_host=your.zosmainframe.com \
-    --env ZOSMF_PORT=11443 \
-    --env ZWED_agent_http_port=8542 \
-    --expose %DISCOVERY_PORT% \
-    --expose %GATEWAY_PORT% \
-    --expose %APP_SERVER_PORT% \
-    -p %DISCOVERY_PORT%:%DISCOVERY_PORT% \
-    -p %GATEWAY_PORT%:${GATEWAY_PORT% \
-    -p %APP_SERVER_PORT%:%APP_SERVER_PORT% \
-    --env GATEWAY_PORT=%GATEWAY_PORT% \
-    --env DISCOVERY_PORT=%DISCOVERY_PORT% \
-    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=%APP_SERVER_PORT% \
-    --mount type=bind,c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs\
+docker run -it ^
+    -h your_hostname ^
+    --env ZOWE_IP_ADDRESS=your.external.ip ^
+    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY ^
+    --env ZOSMF_HOST=your.zosmainframe.com ^
+    --env ZWED_agent_host=your.zosmainframe.com ^
+    --env ZOSMF_PORT=11443 ^
+    --env ZWED_agent_http_port=8542 ^
+    --expose %DISCOVERY_PORT% ^
+    --expose %GATEWAY_PORT% ^
+    --expose %APP_SERVER_PORT% ^
+    -p %DISCOVERY_PORT%:%DISCOVERY_PORT% ^
+    -p %GATEWAY_PORT%:%GATEWAY_PORT% ^
+    -p %APP_SERVER_PORT%:%APP_SERVER_PORT% ^
+    --env GATEWAY_PORT=%GATEWAY_PORT% ^
+    --env DISCOVERY_PORT=%DISCOVERY_PORT% ^
+    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=%APP_SERVER_PORT% ^
+    --mount type=bind,c:\workspaces\ZooTainers-Hackathon2019\certs,target=/root/zowe/certs ^
     rsqa/zowe-v1-lts:amd64
 ```
 
@@ -175,9 +175,9 @@ put something here
 
 ## Test it
 Open browser and test it
- - API Mediation Layer: https://mf.acme.net:60004
- - API ML Discovery Service: https://mf.acme.net:60003/
- - ZAF: https://mf.acme.net:60014
+ - API Mediation Layer: https://mf.acme.net:7554
+ - API ML Discovery Service: https://mf.acme.net:7553/
+ - App Framework: https://mf.acme.net:8544
 
 ## Using Zowe's Docker with Zowe products & plugins
 To use Zowe-based software with the docker container, you must make that software visible to the Zowe that is within Docker by mapping a folder on your host machine to a folder visible within the docker container.

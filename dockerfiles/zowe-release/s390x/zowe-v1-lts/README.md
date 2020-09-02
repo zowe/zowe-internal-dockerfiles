@@ -156,6 +156,16 @@ docker run -it \
     rsqa/zowe-v1-lts:s390x
 ```
 
-Afterward, these plugins must be installed to the app server. Simply ssh into the docker container to run the install-app.sh script, like so:
-```docker exec -it [CONTAINER_ID] /root/zowe/instance/bin/install-app.sh ../../apps/[APPLICATION]```
+By default, external plugins in the ```/root/zowe/apps``` folder will be installed at start up.
+
+To install other plugins to the app server simply ssh into the docker container to run the install-app.sh script, like so:
+```docker exec -it [CONTAINER_ID] /root/zowe/instance/bin/install-app.sh [APPLICATION_DIR]```
 If the script returns with rc=0, then the plugin install succeded and the plugin can be used by refreshing the app server via either clicking "Refresh Applications" in the launchbar menu of the Zowe Desktop, or by doing an HTTP GET call to /plugins?refresh=true to the app server.
+
+## Using an external instance of Zowe
+If you have an instance of Zowe on your host machine that you want to use you can mount a shared volume and set the location of the shared volume as an environmental variable called EXTERNAL_INSTANCE. This can by done by adding these two flags to your docker start script.
+
+```
+-v ~/my_instance:/root/zowe/external_instance:rw \
+--env EXTERNAL_INSTANCE=/root/zowe/external_instance \
+```
