@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 if [ -n "$HOSTNAME" ]; then
   if [ -z "$ZOWE_EXPLORER_HOST" ]; then
     export ZOWE_EXPLORER_HOST=$HOSTNAME
@@ -15,16 +17,17 @@ else
 fi
 
 if [ -d "/root/zowe/apps" ]; then
-	cd /root/zowe/apps
-	for D in */;
-	do
-		if test -f "$D/autoinstall.sh"; then
-			./$D/autoinstall.sh
-		fi
-		if test -f "$D/pluginDefinition.json"; then
-			$INSTANCE_DIR/bin/install-app.sh /root/zowe/apps/$D
-		fi
-	done
+  export ZLUX_ROOT=/root/zowe/install/components/app-server/share
+  cd /root/zowe/apps
+  for D in */;
+   do
+    if test -f "$D/autoinstall.sh"; then
+      app=$(cd $D && pwd)
+      ZLUX_ROOT=$ZLUX_ROOT APP_PLUGIN_DIR=app ./$D/autoinstall.sh
+    elif test -f "$D/pluginDefinition.json"; then
+      $INSTANCE_DIR/bin/install-app.sh /root/zowe/apps/$D
+    fi
+  done
 fi
 
 if [ ! -d "/root/zowe/certs" ]; then
