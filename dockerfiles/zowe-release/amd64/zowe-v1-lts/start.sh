@@ -2,7 +2,7 @@
 # Adjust hostname to match Docker host hostname and certificate in server.p12 (-h ...)
 # Specify ZOSMF and ZSS hostnames and ports (--env ...)
 # Provide location of your certificate if using external one (source=...)
-# Certificate folder structure must be identical to a zowe z/os release
+# Certificate folder structure must be identical to a zowe z/os release, minus z/os keyrings
 # LAUNCH_COMPONENT_GROUPS valid values out of the box are GATEWAY and DESKTOP or GATEWAY,DESKTOP
 
 DISCOVERY_PORT=7553
@@ -12,6 +12,7 @@ APP_SERVER_PORT=8544
 #add non-default settings with --env, using same properties as seen in instance.env
 #   --env ZOWE_ZLUX_TELNET_PORT=23
 docker run -it \
+    --env ZOWE_START=1 \
     -h your_hostname \
     --env ZOWE_IP_ADDRESS=your.external.ip \
     --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \

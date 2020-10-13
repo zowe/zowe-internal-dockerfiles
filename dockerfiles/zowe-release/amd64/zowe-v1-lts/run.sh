@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ "$ZOWE_START" == "0" ]]
+then
+    sleep infinity
+else
 
 
 if [ -n "$HOSTNAME" ]; then
@@ -78,3 +82,5 @@ fi
 
 bash /root/zowe/instance/bin/internal/run-zowe.sh
 sleep infinity
+
+fi

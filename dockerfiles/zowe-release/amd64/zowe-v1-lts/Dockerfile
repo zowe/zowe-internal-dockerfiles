@@ -25,7 +25,7 @@ RUN cd /root/zowe/utils/autoconv && \
     rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
     ln -s ./autoconv/bin/autoconv ../autoconv.sh
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
+RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.16.0-PR-1731/zowe-1.16.0-pr-1731-4-20201013023730.pax" -O /root/zowe/zowe.pax
 
 RUN mkdir /root/zowe/samples
 COPY start.sh /root/zowe/samples/

@@ -83,5 +83,6 @@ RUN rm -f /root/zowe/*.pax && \
 COPY run.sh /root/zowe/
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
+RUN cp /root/zowe/install/bin/zowe-setup-certificates.env /root/zowe/install/bin/zowe-setup-certificates.env.bkp
 
 ENTRYPOINT ["/root/zowe/run.sh"]

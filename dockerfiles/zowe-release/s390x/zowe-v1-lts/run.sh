@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "$ZOWE_START" == "0" ]]
+then
+    sleep infinity
+else
+
+
 if [ -n "$HOSTNAME" ]; then
   if [ -z "$ZOWE_EXPLORER_HOST" ]; then
     export ZOWE_EXPLORER_HOST=$HOSTNAME
@@ -76,3 +82,5 @@ fi
 
 bash /root/zowe/instance/bin/internal/run-zowe.sh
 sleep infinity
+
+fi
