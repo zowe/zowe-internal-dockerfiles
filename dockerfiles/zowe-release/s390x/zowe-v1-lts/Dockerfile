@@ -1,4 +1,4 @@
-FROM rsqa/zowecicd-node12-java11:s390x
+FROM ompzowe/zowecicd-node12-java8:s390x
 
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
@@ -31,6 +31,10 @@ RUN cd /root/zowe/utils/autoconv && \
     ln -s ./autoconv/bin/autoconv ../autoconv.sh
 
 RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.14.0-PR-1507/zowe-1.14.0-pr-1507-25-20200717032955.pax" -O /root/zowe/zowe.pax
+
+RUN mkdir /root/zowe/samples
+COPY start.sh /root/zowe/samples/
+
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \

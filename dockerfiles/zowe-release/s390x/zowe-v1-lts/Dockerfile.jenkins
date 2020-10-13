@@ -1,4 +1,4 @@
-FROM rsqa/zowecicd-node12-java11:s390x
+FROM ompzowe/zowecicd-node12-java8:s390x
 
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
@@ -18,13 +18,23 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends jq moreutils pax openjdk-11-jdk-headless && \
+	apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean;
 
 RUN mkdir /root/zowe/utils
 COPY utils/* /root/zowe/utils/
+RUN cd /root/zowe/utils/autoconv && \
+    npm install && \
+    npm run build && \
+    rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
+    ln -s ./autoconv/bin/autoconv ../autoconv.sh
+
 COPY zowe.pax /root/zowe/
+
+RUN mkdir /root/zowe/samples
+COPY start.sh /root/zowe/samples/
+
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \

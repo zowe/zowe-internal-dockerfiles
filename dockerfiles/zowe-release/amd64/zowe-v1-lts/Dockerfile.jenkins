@@ -1,4 +1,4 @@
-FROM rsqa/zowecicd-node12-java11:amd64
+FROM ompzowe/zowecicd-node12-java8:amd64
 
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
@@ -19,7 +19,17 @@ ENV ZOWE_ZOSMF_PORT='11443'
 
 RUN mkdir /root/zowe/utils
 COPY utils/* /root/zowe/utils/
+RUN cd /root/zowe/utils/autoconv && \
+    npm install && \
+    npm run build && \
+    rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
+    ln -s ./autoconv/bin/autoconv ../autoconv.sh
+
 COPY zowe.pax /root/zowe/
+
+RUN mkdir /root/zowe/samples
+COPY start.sh /root/zowe/samples/
+
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \
