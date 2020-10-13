@@ -23,7 +23,7 @@ RUN apt-get update && \
 	apt-get clean;
 
 RUN mkdir /root/zowe/utils
-COPY utils/* /root/zowe/utils/
+COPY utils/ /root/zowe/utils/
 RUN cd /root/zowe/utils/autoconv && \
     npm install && \
     npm run build && \
