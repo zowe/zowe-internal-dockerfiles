@@ -79,6 +79,10 @@ RUN rm -f /root/zowe/*.pax && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* 
 
+RUN cd /root/zowe/install/shared/explorer-ui-server && \
+    rm -rf node_modules && \
+    npm install --only=prod --ignore-scripts
+
 COPY run.sh /root/zowe/
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
