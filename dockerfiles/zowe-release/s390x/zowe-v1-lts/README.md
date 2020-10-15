@@ -7,7 +7,7 @@
 
 **TL;DR**:
 ```sh
-docker pull rsqa/zowe-v1-lts:s390x
+docker pull ompzowe/zowe-v1-lts:s390x
 export DISCOVERY_PORT=7553
 export GATEWAY_PORT=7554
 export APP_SERVER_PORT=8544
@@ -32,7 +32,7 @@ docker run -it \
     --env DISCOVERY_PORT=${DISCOVERY_PORT} \
     --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
     --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
-    rsqa/zowe-v1-lts:s390x
+    ompzowe/zowe-v1-lts:s390x
 ```
 Open browser and test it
  - API Mediation Layer: https://myhost.acme.net:7554
@@ -70,7 +70,7 @@ docker build -t zowe/docker:latest .
 For example:
 
 ```cmd
-DISCOVERY_PORT=7553 GATEWAY_PORT=7554 APP_SERVER_PORT=8544 docker run -it -h your_hostname --env ZOWE_IP_ADDRESS=your.external.ip --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --env ZOSMF_HOST=your.zosmainframe.com --env ZWED_agent_host=your.zosmainframe.com --env ZOSMF_PORT=11443 --env ZWED_agent_http_port=8542 --expose ${DISCOVERY_PORT} --expose ${GATEWAY_PORT} --expose ${APP_SERVER_PORT} -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} -p ${GATEWAY_PORT}:${GATEWAY_PORT} -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} --env GATEWAY_PORT=${GATEWAY_PORT} --env DISCOVERY_PORT=${DISCOVERY_PORT} --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} --env EXTERNAL_CERTIFICATE=/root/zowe/ext_certs/my.keystore.p12 --env EXTERNAL_CERTIFICATE_ALIAS=alias --env EXTERNAL_CERTIFICATE_AUTHORITIES=/root/zowe/ext_certs/myCA.cer --mount type=bind,source=<folder with certs>,target=/root/zowe/ext_certs rsqa/zowe-v1-lts:s390x
+DISCOVERY_PORT=7553 GATEWAY_PORT=7554 APP_SERVER_PORT=8544 docker run -it -h your_hostname --env ZOWE_IP_ADDRESS=your.external.ip --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY --env ZOSMF_HOST=your.zosmainframe.com --env ZWED_agent_host=your.zosmainframe.com --env ZOSMF_PORT=11443 --env ZWED_agent_http_port=8542 --expose ${DISCOVERY_PORT} --expose ${GATEWAY_PORT} --expose ${APP_SERVER_PORT} -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} -p ${GATEWAY_PORT}:${GATEWAY_PORT} -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} --env GATEWAY_PORT=${GATEWAY_PORT} --env DISCOVERY_PORT=${DISCOVERY_PORT} --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} --env EXTERNAL_CERTIFICATE=/root/zowe/ext_certs/my.keystore.p12 --env EXTERNAL_CERTIFICATE_ALIAS=alias --env EXTERNAL_CERTIFICATE_AUTHORITIES=/root/zowe/ext_certs/myCA.cer --mount type=bind,source=<folder with certs>,target=/root/zowe/ext_certs ompzowe/zowe-v1-lts:s390x
 ```
 Note: External certificates are optional and should not be included in the start command if undesired.
 
@@ -105,7 +105,7 @@ docker run -it \
     --env DISCOVERY_PORT=${DISCOVERY_PORT} \
     --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
     --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
-    rsqa/zowe-v1-lts:s390x
+    ompzowe/zowe-v1-lts:s390x
 ```
 
 #### Expected output
@@ -153,7 +153,7 @@ docker run -it \
     --env DISCOVERY_PORT=${DISCOVERY_PORT} \
     --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
 	-v ~/apps:/root/zowe/apps:rw \
-    rsqa/zowe-v1-lts:s390x
+    ompzowe/zowe-v1-lts:s390x
 ```
 
 By default, external plugins in the ```/root/zowe/apps``` folder will be installed at start up.
