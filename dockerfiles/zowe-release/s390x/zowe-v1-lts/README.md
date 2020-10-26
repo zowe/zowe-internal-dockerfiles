@@ -11,12 +11,11 @@ docker pull ompzowe/zowe-v1-lts:s390x
 
 #add non-default settings with --env, using same properties as seen in instance.env
 #   --env ZOWE_ZLUX_TELNET_PORT=23
-docker run -it \
+docker run --rm \
     --env ZOSMF_HOST=your.zosmainframe.com \
     --env ZWED_agent_host=your.zosmainframe.com \
     -p 7554:7554 \
     -p 8544:8544 \
-    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
     ompzowe/zowe-v1-lts:s390x
 ```
 Open browser and test it
