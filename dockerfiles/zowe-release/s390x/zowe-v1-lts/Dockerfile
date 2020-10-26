@@ -7,15 +7,17 @@ EXPOSE 8544/tcp
 #ENV ZOWE_ZOSMF_HOST='zosmf.host.com'
 #ENV ZOWE_ZSS_HOST='zss.host.com'
 #ENV ZWED_agent_host='zwed.host.com'
-#ENV ZOWE_EXPLORER_HOST='explorer.host.com'
-#ENV ZOWE_IP_ADDRESS=0.0.0.0
+ENV ZOWE_EXPLORER_HOST='localhost'
+ENV ZOWE_IP_ADDRESS=0.0.0.0
 
-ENV ZOWE_ZOSMF_PORT='11443'
+ENV ZOWE_ZOSMF_PORT='10443'
 #ENV ZOWE_ZSS_SERVER_PORT='00000'
-#ENV ZWED_agent_http_port='00000'
+ENV ZWED_agent_http_port='8542'
 
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
+
+ENV LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
 
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends jq moreutils pax openjdk-11-jdk-headless && \
