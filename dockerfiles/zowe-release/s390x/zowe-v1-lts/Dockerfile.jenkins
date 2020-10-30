@@ -17,11 +17,6 @@ ENV ZOWE_ZOSMF_PORT='11443'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends jq moreutils pax openjdk-8-jdk-headless && \
-	rm -rf /var/lib/apt/lists/* && \
-	apt-get clean;
-
 RUN mkdir /root/zowe/utils
 COPY utils/ /root/zowe/utils/
 RUN cd /root/zowe/utils/autoconv && \
