@@ -97,7 +97,7 @@ RUN rm -f /root/zowe/*.pax && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* 
 
-RUN cd /root/zowe/install/shared/explorer-ui-server && \
+RUN cd /root/zowe/install/components/explorer-ui-server && \
     rm -rf node_modules && \
     npm install --only=prod --ignore-scripts
 
