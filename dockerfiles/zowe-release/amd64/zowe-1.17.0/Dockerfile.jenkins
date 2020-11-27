@@ -25,10 +25,11 @@ RUN cd /root/zowe/utils/autoconv && \
     rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
     ln -s ./autoconv/bin/autoconv ../autoconv.sh
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.16.0-PR-1731/zowe-1.16.0-pr-1731-4-20201013023730.pax" -O /root/zowe/zowe.pax
+COPY zowe.pax /root/zowe/
 
 RUN mkdir /root/zowe/samples
 COPY start.sh /root/zowe/samples/
+
 
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \
@@ -41,7 +42,7 @@ RUN cd /root/zowe/zowe-install && \
     sed -i 's/-px //' scripts/zowe-install-zlux.sh && \
     sed -i 's/java version/openjdk version/' scripts/utils/validate-java.sh
 
-#Convert content of pax files from ebcdic to ASCII
+#Conver content of pax files from ebcdic to ASCII
 RUN cd /root/zowe/zowe-install/files && \
     for f in *.pax; do \
         echo "Processing $f file." && \
@@ -79,10 +80,10 @@ RUN rm -f /root/zowe/*.pax && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* 
 
-RUN cd /root/zowe/install/components/explorer-ui-server && \
+RUN cd /root/zowe/install/shared/explorer-ui-server && \
     rm -rf node_modules && \
     npm install --only=prod --ignore-scripts
-
+    
 COPY run.sh /root/zowe/
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
