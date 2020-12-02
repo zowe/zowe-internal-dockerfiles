@@ -8,30 +8,14 @@
 **TL;DR**:
 ```sh
 docker pull ompzowe/zowe-v1-lts:s390x
-export DISCOVERY_PORT=7553
-export GATEWAY_PORT=7554
-export APP_SERVER_PORT=8544
 
 #add non-default settings with --env, using same properties as seen in instance.env
 #   --env ZOWE_ZLUX_TELNET_PORT=23
-docker run -it \
-    -h your_hostname \
-    --env ZOWE_IP_ADDRESS=your.external.ip \
-    --env LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY \
+docker run --rm \
     --env ZOSMF_HOST=your.zosmainframe.com \
     --env ZWED_agent_host=your.zosmainframe.com \
-    --env ZOSMF_PORT=11443 \
-    --env ZWED_agent_http_port=8542 \
-    --expose ${DISCOVERY_PORT} \
-    --expose ${GATEWAY_PORT} \
-    --expose ${APP_SERVER_PORT} \
-    -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} \
-    -p ${GATEWAY_PORT}:${GATEWAY_PORT} \
-    -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
-    --env GATEWAY_PORT=${GATEWAY_PORT} \
-    --env DISCOVERY_PORT=${DISCOVERY_PORT} \
-    --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
-    --mount type=bind,source=c:\temp\certs,target=/root/zowe/certs \
+    -p 7554:7554 \
+    -p 8544:8544 \
     ompzowe/zowe-v1-lts:s390x
 ```
 Open browser and test it
@@ -52,8 +36,6 @@ docker build -t zowe/docker:latest .
 ## Executing Zowe Docker Container 
  - prepare folder with certificates, you should have it from previous step.
  - adjust `docker start` command
-   - `-h <hostname>` - hostname of docker host (hostname of your laptop eg: myhost.acme.net)
-   - `ZOWE_IP_ADDRESS=<ip>` - The IP which the servers should bind to. Should not be a loopback address.
    - `ZOSMF_HOST=<zosmf_hostname>` - z/OSMF hostname (eg mf.acme.net)
    - `ZOSMF_PORT=<zosmf_port>` - z/OSMF port eg (1443)
    - `ZWED_agent_host=<zss_hostname>` - ZSS host (eg mf.acme.net)

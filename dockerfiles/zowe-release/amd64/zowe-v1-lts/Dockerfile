@@ -1,5 +1,12 @@
 FROM ompzowe/zowecicd-node12-java8:amd64
 
+# allow to customize which Zowe build to build from
+# There are 3 possible values:
+# 1. ZOWE_BUILD=: empty, which will try to find the local zowe.pax in same directory. The build has to be named as zowe.pax.
+# 2. ZOWE_BUILD=latest: will download the most recent official release and use it as base build
+# 3. ZOWE_BUILD=<url>: will download Zowe build from this url and use it as base build
+ARG ZOWE_BUILD=
+
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
 EXPOSE 8544/tcp
@@ -7,15 +14,17 @@ EXPOSE 8544/tcp
 #ENV ZOWE_ZOSMF_HOST='zosmf.host.com'
 #ENV ZOWE_ZSS_HOST='zss.host.com'
 #ENV ZWED_agent_host='zwed.host.com'
-#ENV ZOWE_EXPLORER_HOST='explorer.host.com'
-#ENV ZOWE_IP_ADDRESS=0.0.0.0
+ENV ZOWE_EXPLORER_HOST='localhost'
+ENV ZOWE_IP_ADDRESS=0.0.0.0
 
-ENV ZOWE_ZOSMF_PORT='11443'
+ENV ZOWE_ZOSMF_PORT='443'
 #ENV ZOWE_ZSS_SERVER_PORT='00000'
-#ENV ZWED_agent_http_port='00000'
+ENV ZWED_agent_http_port='8542'
 
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
+
+ENV LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
 
 RUN mkdir /root/zowe/utils
 COPY utils/ /root/zowe/utils/
@@ -25,7 +34,10 @@ RUN cd /root/zowe/utils/autoconv && \
     rm -rf node_modules src samples *.js *.json .editorconfig *ignore *.md && \
     ln -s ./autoconv/bin/autoconv ../autoconv.sh
 
-RUN wget -q "https://zowe.jfrog.io/zowe/libs-snapshot-local/org/zowe/1.16.0-PR-1731/zowe-1.16.0-pr-1731-4-20201013023730.pax" -O /root/zowe/zowe.pax
+# copy run.sh and optional zowe.pax
+COPY run.sh zowe.pax* /root/zowe/
+# download zowe build if specified
+RUN /root/zowe/utils/download-zowe-build.sh "${ZOWE_BUILD}"
 
 RUN mkdir /root/zowe/samples
 COPY start.sh /root/zowe/samples/
@@ -83,7 +95,6 @@ RUN cd /root/zowe/install/components/explorer-ui-server && \
     rm -rf node_modules && \
     npm install --only=prod --ignore-scripts
 
-COPY run.sh /root/zowe/
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
 RUN cp /root/zowe/install/bin/zowe-setup-certificates.env /root/zowe/install/bin/zowe-setup-certificates.env.bkp
