@@ -24,13 +24,6 @@ ENV ZWED_agent_http_port='8542'
 #ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
 #ENV PKCS11_TOKEN_LABEL='KEY_APIML'
 
-ENV LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
-
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends jq moreutils pax openjdk-11-jdk-headless && \
-	rm -rf /var/lib/apt/lists/* && \
-	apt-get clean;
-
 RUN mkdir /root/zowe/utils
 COPY utils/ /root/zowe/utils/
 RUN cd /root/zowe/utils/autoconv && \
