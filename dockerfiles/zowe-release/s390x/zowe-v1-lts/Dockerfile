@@ -83,12 +83,12 @@ RUN cd /root/zowe/zowe-install && \
     \
     \
     /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
-    bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
+    bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance" && \
     \
     \
     cd /root/zowe/install/components/explorer-ui-server && \
     rm -rf node_modules && \
-    npm install --only=prod --ignore-scripts
+    npm install --only=prod --ignore-scripts && \
     rm -f /root/zowe/*.pax && \
     rm -rf /root/zowe/zowe-install/
 
