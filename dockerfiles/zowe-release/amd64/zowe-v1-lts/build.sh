@@ -22,7 +22,7 @@
 mkdir -p utils
 cp -r ../../../../utils/* ./utils
 if [ "$2" = "" ]; then
-  docker build -f Dockerfile --no-cache -t ompzowe/zowe-v1-lts:testing$1 .
+  docker build -f Dockerfile --no-cache -t ompzowe/server-bundle:testing$1 .
 else
-  docker build -f Dockerfile --no-cache --build-arg ZOWE_BUILD=$2 -t ompzowe/zowe-v1-lts:testing$1 .
+  docker build -f Dockerfile --no-cache --build-arg ZOWE_BUILD=$2 -t ompzowe/server-bundle:testing$1 .
 fi
