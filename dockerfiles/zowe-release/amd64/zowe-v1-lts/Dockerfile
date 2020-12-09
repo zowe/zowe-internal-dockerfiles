@@ -93,7 +93,9 @@ RUN rm -f /root/zowe/*.pax && \
 
 RUN cd /root/zowe/install/components/explorer-ui-server && \
     rm -rf node_modules && \
-    npm install --only=prod --ignore-scripts
+    npm install --only=prod --ignore-scripts && \ 
+    cd /root/zowe/install/components && \
+    find */bin -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \;
 
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
