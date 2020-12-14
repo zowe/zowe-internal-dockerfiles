@@ -21,13 +21,13 @@ ENV ZOWE_ZOSMF_PORT='443'
 #ENV ZOWE_ZSS_SERVER_PORT='00000'
 ENV ZWED_agent_http_port='8542'
 
-#ENV PKCS11_TOKEN_NAME='ZOWE.ZSS.JWTKEYS'
-#ENV PKCS11_TOKEN_LABEL='KEY_APIML'
-
 ENV LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
 
-RUN mkdir /root/zowe/utils
+RUN mkdir /root/zowe/utils && \
+    mkdir /root/zowe/samples
 COPY utils/ /root/zowe/utils/
+COPY start.sh /root/zowe/samples/
+
 RUN cd /root/zowe/utils/autoconv && \
     npm install && \
     npm run build && \
@@ -39,9 +39,9 @@ COPY run.sh zowe.pax* /root/zowe/
 # download zowe build if specified
 RUN /root/zowe/utils/download-zowe-build.sh "${ZOWE_BUILD}"
 
-RUN mkdir /root/zowe/samples
-COPY start.sh /root/zowe/samples/
-
+# 1. Convert content of pax files from ebcdic to ASCII
+# 2. replace or remove some zos specific parameters
+# 3. Install zowe, then remove installer files
 RUN cd /root/zowe/zowe-install && \
     tar -xvf ../zowe.pax --strip 1 && \
     find . -type f -iregex '.*\.\(rexx\|js\|sh\|json\|jcl\|yaml\|clist\|env\)$' -exec sh -c "conv '{}' | sponge '{}'" \; && \
@@ -51,10 +51,10 @@ RUN cd /root/zowe/zowe-install && \
     find . -type f -name '*.sh' -exec sh -c "chmod +x {}" \; && \
     echo "exit 0" > scripts/opercmd && \
     sed -i 's/-px //' scripts/zowe-install-zlux.sh && \
-    sed -i 's/java version/openjdk version/' scripts/utils/validate-java.sh
-
-#Convert content of pax files from ebcdic to ASCII
-RUN cd /root/zowe/zowe-install/files && \
+    sed -i 's/java version/openjdk version/' scripts/utils/validate-java.sh && \
+    \
+    \
+    cd /root/zowe/zowe-install/files && \
     for f in *.pax; do \
         echo "Processing $f file." && \
         rm -rf tmp && \
@@ -80,20 +80,17 @@ RUN cd /root/zowe/zowe-install/files && \
         pax -wf ../$f . &&\
         cd .. ; \
     done && \
-    rm -f /root/zowe/*.pax 
-
-
-RUN /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
-	bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance"
-
-RUN rm -f /root/zowe/*.pax && \
-    rm -rf /root/zowe/zowe-install/ && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* 
-
-RUN cd /root/zowe/install/components/explorer-ui-server && \
+    \
+    \
+    /root/zowe/zowe-install/install/zowe-install.sh -i /root/zowe/install -l /root/zowe/logs && \
+  	bash -c "/root/zowe/install/bin/zowe-configure-instance.sh -c /root/zowe/instance" && \
+    \
+    \
+    cd /root/zowe/install/components/explorer-ui-server && \
     rm -rf node_modules && \
-    npm install --only=prod --ignore-scripts && \ 
+    npm install --only=prod --ignore-scripts && \
+    rm -f /root/zowe/*.pax && \
+    rm -rf /root/zowe/zowe-install && \
     cd /root/zowe/install/components && \
     find */bin -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \;
 
