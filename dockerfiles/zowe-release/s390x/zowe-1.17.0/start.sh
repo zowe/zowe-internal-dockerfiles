@@ -30,4 +30,4 @@ docker run -it \
     --env GATEWAY_PORT=${GATEWAY_PORT} \
     --env DISCOVERY_PORT=${DISCOVERY_PORT} \
     --env ZOWE_ZLUX_SERVER_HTTPS_PORT=${APP_SERVER_PORT} \
-    ompzowe/zowe-v1-lts:s390x $@
+    ompzowe/server-bundle:s390x $@
