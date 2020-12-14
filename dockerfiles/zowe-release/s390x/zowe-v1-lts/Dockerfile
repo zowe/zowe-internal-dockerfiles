@@ -90,7 +90,9 @@ RUN cd /root/zowe/zowe-install && \
     rm -rf node_modules && \
     npm install --only=prod --ignore-scripts && \
     rm -f /root/zowe/*.pax && \
-    rm -rf /root/zowe/zowe-install/
+    rm -rf /root/zowe/zowe-install && \
+    cd /root/zowe/install/components && \
+    find */bin -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \;
 
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
