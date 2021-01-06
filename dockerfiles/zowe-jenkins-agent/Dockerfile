@@ -43,6 +43,7 @@ RUN mkdir ${JENKINS_AGENT_HOME}/.jenkins
 # - libx11-dev libxkbfile-dev: required by theia
 # - xvfb: required by cypress
 # - iptables: required by docker
+# - openjdk-11: required by sonarcloud
 RUN apt-get update && apt-get install --no-install-recommends -y \
     openssh-server \
     vim curl wget rsync pax build-essential sshpass bzip2 zip jq locales \
@@ -51,7 +52,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libdbus-glib-1-2 \
     libx11-dev libxkbfile-dev \
     libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 xvfb \
-    iptables
+    iptables openjdk-11-jdk
 
 #####################################################
 # configure locale
@@ -148,9 +149,11 @@ RUN rm -rf /var/lib/apt/lists/*
 #####################################################
 # the new "openjdk:8-jdk" base image put Java in "/usr/local/openjdk-8" folder
 # we need a symlink
+# create symlink also for jdk11
 RUN mkdir -p /usr/java \
   && ln -s /usr/local/openjdk-8 /usr/java/openjdk-8 \
-  && ln -s /usr/local/openjdk-8 /usr/java/default
+  && ln -s /usr/local/openjdk-8 /usr/java/default  \
+  && ln -s /usr/lib/jvm/java-11-openjdk-amd64 /usr/java/openjdk-11
 
 #####################################################
 # install nvm on jenkins user
