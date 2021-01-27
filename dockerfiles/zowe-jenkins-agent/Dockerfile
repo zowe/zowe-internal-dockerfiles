@@ -137,7 +137,8 @@ RUN set -eux; \
 
 #####################################################
 # install Ansible
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+RUN python --version \
+    && curl https://bootstrap.pypa.io/2.7/get-pip.py -o get-pip.py \
     && python get-pip.py \
     && pip install ansible \
     && ansible --version
