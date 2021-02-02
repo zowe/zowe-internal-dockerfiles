@@ -44,6 +44,7 @@ RUN mkdir ${JENKINS_AGENT_HOME}/.jenkins
 # - xvfb: required by cypress
 # - iptables: required by docker
 # - openjdk-11: required by sonarcloud
+# - expect: used for CLI input automation
 RUN apt-get update && apt-get install --no-install-recommends -y \
     openssh-server \
     vim curl wget rsync pax build-essential sshpass bzip2 zip jq locales \
@@ -52,7 +53,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libdbus-glib-1-2 \
     libx11-dev libxkbfile-dev \
     libgtk2.0-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 xvfb \
-    iptables openjdk-11-jdk
+    iptables openjdk-11-jdk \
+    expect
 
 #####################################################
 # configure locale
