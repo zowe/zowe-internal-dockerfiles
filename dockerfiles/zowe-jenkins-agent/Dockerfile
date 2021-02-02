@@ -165,7 +165,8 @@ USER ${user}
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v${NVM_VERSION}/install.sh | bash
 ENV NVM_DIR ${JENKINS_AGENT_HOME}/.nvm
 # install node version and set it as the default one
-RUN /bin/bash -c "source ${NVM_DIR}/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && nvm use default && npm install -g npm && npm install -g yarn && npm install -g jfrog-cli-go"
+# npm@7 requires node v10
+RUN /bin/bash -c "source ${NVM_DIR}/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && nvm use default && npm install -g npm@^6.14.11 && npm install -g yarn@^1.22.10 && npm install -g jfrog-cli-go"
 ENV NODE_PATH ${NVM_DIR}/versions/node/v${NODE_VERSION}/lib/node_modules
 ENV PATH      ${NVM_DIR}/versions/node/v${NODE_VERSION}/bin:$PATH
 
