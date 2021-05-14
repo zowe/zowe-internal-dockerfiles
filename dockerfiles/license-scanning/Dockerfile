@@ -55,6 +55,8 @@ RUN file="dependency-check-${owasp_version}-release.zip"                        
 RUN gem install bundle-audit  
 RUN gem cleanup
 
+COPY --chown=jenkins:jenkins include/resources /home/jenkins/resources
+
 COPY --chown=jenkins:jenkins include/LicenseFinder /home/jenkins/LicenseFinder
 
 WORKDIR /home/jenkins/LicenseFinder
@@ -67,6 +69,7 @@ COPY --chown=jenkins:jenkins include/dependency-scan /home/jenkins/dependency-sc
 WORKDIR /home/jenkins/dependency-scan
 RUN yarn install && yarn build
 WORKDIR /home/jenkins
+
 
 USER root
 RUN curl -fL https://getcli.jfrog.io | sh && chmod 775 jfrog && mv jfrog /usr/local/bin
