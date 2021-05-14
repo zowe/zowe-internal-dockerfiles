@@ -72,7 +72,7 @@ WORKDIR /home/jenkins
 
 
 USER root
-RUN curl -fL https://getcli.jfrog.io | sh && chmod 775 jfrog && mv jfrog /usr/local/bin
+RUN curl -fL https://getcli.jfrog.io | sh -s 1.44.0 && chmod 775 jfrog && mv jfrog /usr/local/bin
 
 ARG VERSION=3.28
 COPY include/jenkins-agent-entrypoint /usr/local/bin/jenkins-agent-entrypoint
