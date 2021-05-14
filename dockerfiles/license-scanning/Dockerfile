@@ -43,8 +43,8 @@ ENV PATH=$GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
 
 RUN npm install -g yarn
 
-ENV owasp_version=5.1.0
-ENV owasp_dc_download=https://dl.bintray.com/jeremy-long/owasp
+ENV owasp_version=5.3.2
+ENV owasp_dc_download="https://github.com/jeremylong/DependencyCheck/releases/download/v${owasp_version}/"
 
 RUN file="dependency-check-${owasp_version}-release.zip"                         		&& \
 	wget "$owasp_dc_download/$file"                                             && \
