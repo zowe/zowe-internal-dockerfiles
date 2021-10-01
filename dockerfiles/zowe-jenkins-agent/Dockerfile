@@ -159,6 +159,11 @@ RUN mkdir -p /usr/java \
   && ln -s /usr/lib/jvm/java-11-openjdk-amd64 /usr/java/openjdk-11
 
 #####################################################
+# install yq
+RUN wget https://github.com/mikefarah/yq/releases/download/v4.13.2/yq_linux_amd64.tar.gz -O - | tar xz \
+    && mv yq_linux_amd64 /usr/bin/yq
+
+#####################################################
 # install nvm on jenkins user
 # switch to jenkins user
 USER ${user}
