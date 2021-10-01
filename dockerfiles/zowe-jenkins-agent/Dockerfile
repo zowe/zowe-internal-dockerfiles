@@ -138,16 +138,15 @@ RUN set -eux; \
   chmod +x /usr/local/bin/dind
 
 #####################################################
-# create symlink to python from python3, pip from pip3 due to deprecation
-RUN ln -s /usr/local/bin/python3 /usr/local/bin/python \
-    && ln -s /usr/local/bin/pip3 /usr/local/bin/pip
+# create symlink to python from python3 due to python2 is deprecated
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 #####################################################
 # install Ansible
 RUN python --version \
     && curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py \
     && python get-pip.py \
-    && pip install ansible \
+    && pip3 install ansible \
     && ansible --version
 
 #####################################################
