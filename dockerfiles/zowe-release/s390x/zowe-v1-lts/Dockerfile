@@ -1,4 +1,4 @@
-FROM ompzowe/zowecicd-node12-java8:s390x
+FROM ompzowe/zowecicd-node12-java8:s390x as builder
 
 # allow to customize which Zowe build to build from
 # There are 3 possible values:
@@ -6,6 +6,11 @@ FROM ompzowe/zowecicd-node12-java8:s390x
 # 2. ZOWE_BUILD=latest: will download the most recent official release and use it as base build
 # 3. ZOWE_BUILD=<url>: will download Zowe build from this url and use it as base build
 ARG ZOWE_BUILD=
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl wget \
+    groff iproute2 moreutils pax && \
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 7553/tcp
 EXPOSE 7554/tcp
@@ -56,29 +61,29 @@ RUN cd /root/zowe/zowe-install && \
     \
     cd /root/zowe/zowe-install/files && \
     for f in *.pax; do \
-        echo "Processing $f file." && \
-        rm -rf tmp && \
-        mkdir tmp && \
-        cd tmp && \
-        pax -rf ../$f && \
-        rm ../$f && \
-        find . -type f -iregex '.*\.\(rexx\|js\|sh\|json\|jcl\|yaml\|clist\|html\|template\|css\|svg\|map\|gz\|env\)$' -exec sh -c "conv '{}' | sponge '{}'" \; && \
-        find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; && \
-        pax -wf ../$f . && \
-        cd .. ;  \
+    echo "Processing $f file." && \
+    rm -rf tmp && \
+    mkdir tmp && \
+    cd tmp && \
+    pax -rf ../$f && \
+    rm ../$f && \
+    find . -type f -iregex '.*\.\(rexx\|js\|sh\|json\|jcl\|yaml\|clist\|html\|template\|css\|svg\|map\|gz\|env\)$' -exec sh -c "conv '{}' | sponge '{}'" \; && \
+    find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; && \
+    pax -wf ../$f . && \
+    cd .. ;  \
     done && \
     cd zlux && \
     for f in *.pax; do \
-        echo "Processing $f file." &&\
-        rm -rf tmp &&\
-        mkdir tmp &&\
-        cd tmp &&\
-        pax -rf ../$f &&\
-        rm ../$f &&\
-        find . -type f -iregex '.*\.\(sh\)$' -exec sh -c "conv '{}' | sponge '{}'" \; && \
-        find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; &&\
-        pax -wf ../$f . &&\
-        cd .. ; \
+    echo "Processing $f file." &&\
+    rm -rf tmp &&\
+    mkdir tmp &&\
+    cd tmp &&\
+    pax -rf ../$f &&\
+    rm ../$f &&\
+    find . -type f -iregex '.*\.\(sh\)$' -exec sh -c "conv '{}' | sponge '{}'" \; && \
+    find . -type f -name '*.sh' -exec sh -c "sed -i 's/-Xquickstart//' {}" \; &&\
+    pax -wf ../$f . &&\
+    cd .. ; \
     done && \
     \
     \
@@ -97,5 +102,25 @@ RUN cd /root/zowe/zowe-install && \
 # Could be modified during runtime, back it up.
 RUN cp /root/zowe/instance/instance.env /root/zowe/instance/instance.env.bkp
 RUN cp /root/zowe/install/bin/zowe-setup-certificates.env /root/zowe/install/bin/zowe-setup-certificates.env.bkp
+
+FROM ompzowe/zowecicd-node12-java8:s390x
+
+EXPOSE 7553/tcp
+EXPOSE 7554/tcp
+EXPOSE 8544/tcp
+
+#ENV ZOWE_ZOSMF_HOST='zosmf.host.com'
+#ENV ZOWE_ZSS_HOST='zss.host.com'
+#ENV ZWED_agent_host='zwed.host.com'
+ENV ZOWE_EXPLORER_HOST='localhost'
+ENV ZOWE_IP_ADDRESS=0.0.0.0
+
+ENV ZOWE_ZOSMF_PORT='443'
+#ENV ZOWE_ZSS_SERVER_PORT='00000'
+ENV ZWED_agent_http_port='8542'
+
+ENV LAUNCH_COMPONENT_GROUPS=DESKTOP,GATEWAY
+
+COPY --from=builder /root/zowe /root/zowe
 
 ENTRYPOINT ["/root/zowe/run.sh"]
